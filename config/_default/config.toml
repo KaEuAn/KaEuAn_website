@@ -1,0 +1,15 @@
+[module]
+[module.hugoVersion]
+extended = true
+min = "0.87.0"
+max = "0.147.1"
+
+# Настройки языка по умолчанию
+defaultContentLanguage = "en"
+
+
+[params]
+  # ... параметры темы Blowfish ...
+  [params.social]
+    telegram = "t.me/phantom_of_irony"
+    facebook = "jatozan"
