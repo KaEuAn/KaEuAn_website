@@ -4,7 +4,7 @@ date = 2023-10-27T10:00:00+06:00
 draft = false
 +++
 
-## Welcome to my about page!
+## Welcome to Jatozan website!
 
 Hi! Here you can read a bit about me and my interests.
 
