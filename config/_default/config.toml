@@ -11,5 +11,7 @@ defaultContentLanguage = "en"
 [params]
   # ... параметры темы Blowfish ...
   [params.social]
-    telegram = "t.me/phantom_of_irony"
+    telegram = "https://t.me/jatozan"
     facebook = "jatozan"
+    instagram = "https://instagram.com/jatozan"
+    youtube = "https://youtube.com/jatozan"
