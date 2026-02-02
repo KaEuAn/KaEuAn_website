@@ -8,5 +8,8 @@
         "build:hugo": "hugo --gc --minify",
         "build:all": "npm run prebuild:hugo && npm run build:hugo",
         "start": "npm run prebuild:hugo && hugo server -D"
+    },
+    "dependencies": {
+        "@google/genai": "^1.39.0"
     }
 }
