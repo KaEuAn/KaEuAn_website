@@ -19,5 +19,23 @@ layout: fullwidth
     // Optional: Observe changes inside the iframe to auto-resize dynamically
     const resizeObserver = new ResizeObserver(() => resizeIframe());
     resizeObserver.observe(iframe.contentWindow.document.body);
+
+    // Sync Theme (Dark Mode)
+    function syncTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      const iframeHtml = iframe.contentWindow.document.documentElement;
+      if (isDark) {
+        iframeHtml.classList.add('dark');
+      } else {
+        iframeHtml.classList.remove('dark');
+      }
+    }
+
+    // Initial sync
+    syncTheme();
+
+    // Observe parent theme changes
+    const themeObserver = new MutationObserver(() => syncTheme());
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   };
 </script>
