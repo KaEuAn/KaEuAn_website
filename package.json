@@ -11,5 +11,8 @@
     },
     "dependencies": {
         "@google/genai": "^1.39.0"
+    },
+    "devDependencies": {
+        "@netlify/functions": "^5.1.2"
     }
 }

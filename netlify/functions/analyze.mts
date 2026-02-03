@@ -1,26 +1,26 @@
-import { GoogleGenAI, SchemaType } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import type { Context, Request } from "@netlify/functions";
 
 // Define schema locally since we can't easily share types between root and submodule without complex build steps
 const responseSchema = {
-    type: SchemaType.OBJECT,
+    type: Type.OBJECT,
     properties: {
         biases: {
-            type: SchemaType.ARRAY,
+            type: Type.ARRAY,
             description: "A list of cognitive biases found in the text.",
             items: {
-                type: SchemaType.OBJECT,
+                type: Type.OBJECT,
                 properties: {
                     phrase: {
-                        type: SchemaType.STRING,
+                        type: Type.STRING,
                         description: "The exact, verbatim phrase from the text that shows the bias. It must be a substring of the original text.",
                     },
                     biasName: {
-                        type: SchemaType.STRING,
+                        type: Type.STRING,
                         description: "The name of the cognitive bias.",
                     },
                     explanation: {
-                        type: SchemaType.STRING,
+                        type: Type.STRING,
                         description: "A detailed but concise explanation of this cognitive bias and why the phrase is an example of it.",
                     },
                 },
@@ -28,17 +28,17 @@ const responseSchema = {
             },
         },
         strengths: {
-            type: SchemaType.ARRAY,
+            type: Type.ARRAY,
             description: "A list of phrases that are objective, well-reasoned, or clearly stated.",
             items: {
-                type: SchemaType.OBJECT,
+                type: Type.OBJECT,
                 properties: {
                     phrase: {
-                        type: SchemaType.STRING,
+                        type: Type.STRING,
                         description: "The exact, verbatim phrase from the text that is clear, objective, or well-reasoned.",
                     },
                     endorsement: {
-                        type: SchemaType.STRING,
+                        type: Type.STRING,
                         description: "A brief, encouraging explanation of why this phrase is good (e.g., 'Clear and objective statement', 'Well-supported argument').",
                     },
                 },
