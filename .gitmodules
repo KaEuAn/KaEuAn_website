@@ -3,4 +3,5 @@
 	url = https://github.com/nunocoracao/blowfish.git
 [submodule "Cognitive-detector-bias"]
 	path = Cognitive-detector-bias
-	url = https://github.com/KaEuAn/Cognitive-detector-bias.git
+	url = git@github.com:KaEuAn/Cognitive-detector-bias.git
+
