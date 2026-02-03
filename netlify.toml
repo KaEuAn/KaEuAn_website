@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build:all"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "20"
+  HUGO_VERSION = "0.120.4"
+
+[context.production.environment]
+  HUGO_ENV = "production"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"

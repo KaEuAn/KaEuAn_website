@@ -1,0 +1,18 @@
+{
+    "name": "kaeuan-website",
+    "version": "1.0.0",
+    "description": "Website with integrated apps",
+    "scripts": {
+        "build:react": "cd Cognitive-detector-bias && npm install && npm run build",
+        "prebuild:hugo": "npm run build:react && mkdir -p static/app-cognitive-bias && cp -r Cognitive-detector-bias/dist/* static/app-cognitive-bias/",
+        "build:hugo": "hugo --gc --minify",
+        "build:all": "npm run prebuild:hugo && npm run build:hugo",
+        "start": "npm run prebuild:hugo && hugo server -D"
+    },
+    "dependencies": {
+        "@google/genai": "^1.39.0"
+    },
+    "devDependencies": {
+        "@netlify/functions": "^5.1.2"
+    }
+}

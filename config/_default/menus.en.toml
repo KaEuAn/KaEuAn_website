@@ -4,6 +4,11 @@
   weight = 10
 
 [[main]]
+  name = "Cognitive Bias"
+  url = "/cognitive-bias/"
+  weight = 15
+
+[[main]]
   name = "Contacts"
   pageRef = "contacts"
   weight = 20
