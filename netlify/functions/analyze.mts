@@ -73,16 +73,10 @@ export default async (req: Request, context: Context) => {
         const { text, language, isThinkingMode } = body;
 
         const targetModel = isThinkingMode ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${apiKey}`;
+        // Try v1 first as it's the most stable
+        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${targetModel}:generateContent?key=${apiKey}`;
 
-        // Model Discovery: Log available models once to find the "Gemini 3" identifier
-        const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
-        fetch(listUrl).then(r => r.json()).then(d => {
-            const names = d.models?.map((m: any) => m.name.replace('models/', '')) || [];
-            console.log("DEBUG: Your available models:", names.join(', '));
-        }).catch(() => {});
-
-        console.log(`DEBUG: Bypassing SDK. Fetching ${targetModel}...`);
+        console.log(`DEBUG: Fetching ${targetModel} via v1...`);
 
         const response = await fetch(apiUrl, {
             method: "POST",
@@ -99,24 +93,27 @@ export default async (req: Request, context: Context) => {
         const data = await response.json() as any;
 
         if (!response.ok) {
-            console.error("DEBUG: Raw Fetch Failed:", JSON.stringify(data, null, 2));
-            throw new Error(data.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+            // If failed, let's find out what models ARE available
+            const listRes = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
+            const listData = await listRes.json() as any;
+            const availableNames = listData.models?.map((m: any) => m.name.replace('models/', '')) || [];
+            
+            console.error("DEBUG: Request Failed. Available models:", availableNames);
+            throw new Error(`Model ${targetModel} not found. Available on your key: ${availableNames.join(', ') || 'NONE'}`);
         }
 
-        // The response format for raw fetch is slightly different: candidates[0].content.parts[0].text
         const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(data);
         return new Response(resultText, { headers: { "Content-Type": "application/json" } });
 
     } catch (error: any) {
         const diagnostics = {
             message: error?.message,
-            stack: error?.stack,
             name: error?.name
         };
-        console.error("DEBUG: Fatal Error:", JSON.stringify(diagnostics, null, 2));
-
-        return new Response(JSON.stringify({
-            error: diagnostics.message || "Request failed",
+        console.error("DEBUG: Final Crash Details:", JSON.stringify(diagnostics, null, 2));
+        
+        return new Response(JSON.stringify({ 
+            error: diagnostics.message || "Execution Failed",
             details: diagnostics
         }), { status: 500 });
     }
