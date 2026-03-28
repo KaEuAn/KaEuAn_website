@@ -72,8 +72,15 @@ export default async (req: Request, context: Context) => {
         const body = await req.json() as { text: string; language: string; isThinkingMode: boolean };
         const { text, language, isThinkingMode } = body;
 
-        const targetModel = isThinkingMode ? 'gemini-3.1-pro' : 'gemini-3-flash';
+        const targetModel = isThinkingMode ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${apiKey}`;
+
+        // Model Discovery: Log available models once to find the "Gemini 3" identifier
+        const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+        fetch(listUrl).then(r => r.json()).then(d => {
+            const names = d.models?.map((m: any) => m.name.replace('models/', '')) || [];
+            console.log("DEBUG: Your available models:", names.join(', '));
+        }).catch(() => {});
 
         console.log(`DEBUG: Bypassing SDK. Fetching ${targetModel}...`);
 
