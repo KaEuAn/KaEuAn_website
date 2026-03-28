@@ -53,7 +53,9 @@ export default async (req: Request, context: Context) => {
         return new Response("Method Not Allowed", { status: 405 });
     }
 
-    const apiKey = process.env.SERVER_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    const rawKey = process.env.SERVER_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    const apiKey = rawKey?.trim();
+
     console.log("Function invoked. Environment check...");
     
     if (!apiKey) {
@@ -61,7 +63,6 @@ export default async (req: Request, context: Context) => {
         return new Response(JSON.stringify({ error: "Server misconfiguration: API KEY MISSING" }), { status: 500 });
     }
 
-    // Safe logging: reveal only start and end to verify the correct key is being used
     const maskedKey = apiKey.length > 8 
         ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`
         : "***";
@@ -79,7 +80,10 @@ export default async (req: Request, context: Context) => {
             apiKey,
             baseUrl: "https://generativelanguage.googleapis.com"
         });
-        const modelName = isThinkingMode ? 'gemini-3.1-pro' : 'gemini-3-flash';
+
+        // Use 'models/' prefix which is standard for the generative language API
+        const modelName = isThinkingMode ? 'models/gemini-3.1-pro' : 'models/gemini-3-flash';
+        console.log(`DEBUG: Target Model: ${modelName}`);
 
         const prompt = `Analyze the following text. Identify phrases demonstrating cognitive biases AND phrases that are strengths (e.g., objective, well-reasoned, clear).
 For each bias, provide the exact phrase, bias name, and a clear explanation.
@@ -104,7 +108,11 @@ Text to analyze:
         });
 
     } catch (error: any) {
-        console.error("Error processing request:", error);
-        return new Response(JSON.stringify({ error: error?.message || "Internal Server Error" }), { status: 500 });
+        console.error("DEBUG: Full Error Object:", JSON.stringify(error, null, 2));
+        const errorMessage = error?.message || (typeof error === 'string' ? error : "Internal Server Error");
+        return new Response(JSON.stringify({ 
+            error: errorMessage,
+            details: error?.statusText || error?.name || "Check backend logs for full stack trace"
+        }), { status: 500 });
     }
 };
