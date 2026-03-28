@@ -72,47 +72,40 @@ export default async (req: Request, context: Context) => {
         const body = await req.json() as { text: string; language: string; isThinkingMode: boolean };
         const { text, language, isThinkingMode } = body;
 
-        if (!text) {
-            return new Response(JSON.stringify({ error: "Text is required" }), { status: 400 });
-        }
-
         const ai = new GoogleGenAI({ 
             apiKey,
-            baseUrl: "https://generativelanguage.googleapis.com"
+            baseUrl: "https://generativelanguage.googleapis.com/v1beta" // Use v1beta for better compatibility with new models
         });
 
-        // Use 'models/' prefix which is standard for the generative language API
-        const modelName = isThinkingMode ? 'models/gemini-3.1-pro' : 'models/gemini-3-flash';
-        console.log(`DEBUG: Target Model: ${modelName}`);
-
-        const prompt = `Analyze the following text. Identify phrases demonstrating cognitive biases AND phrases that are strengths (e.g., objective, well-reasoned, clear).
-For each bias, provide the exact phrase, bias name, and a clear explanation.
-For each strength, provide the exact phrase and a brief, encouraging endorsement.
-
-Text to analyze:
-"${text}"`;
+        const targetModel = isThinkingMode ? 'models/gemini-3.1-pro' : 'models/gemini-1.5-flash';
+        console.log(`DEBUG: Analysis attempt with ${targetModel}`);
 
         const result = await ai.models.generateContent({
-            model: modelName,
-            contents: prompt,
+            model: targetModel,
+            contents: text,
             config: {
-                systemInstruction: `You are an expert in psychology, linguistics, and constructive feedback. Your task is to detect cognitive biases and identify textual strengths. Respond in valid JSON format according to the provided schema. All explanations and endorsements should be in ${language || 'en'}. If no biases or strengths are found, return empty arrays for both.`,
+                systemInstruction: `Analyze for cognitive biases and strengths. Result in JSON. Language: ${language || 'en'}.`,
                 responseMimeType: "application/json",
                 responseSchema: responseSchema,
-                ...(isThinkingMode && { thinkingConfig: { thinkingBudget: 32768 } }),
             },
         });
 
-        return new Response(result.text, {
-            headers: { "Content-Type": "application/json" }
-        });
+        return new Response(result.text, { headers: { "Content-Type": "application/json" } });
 
     } catch (error: any) {
-        console.error("DEBUG: Full Error Object:", JSON.stringify(error, null, 2));
-        const errorMessage = error?.message || (typeof error === 'string' ? error : "Internal Server Error");
+        // Force extraction of hidden error properties
+        const diagnostics = {
+            message: error?.message,
+            status: error?.status,
+            reason: error?.reason,
+            details: error?.details,
+            name: error?.name
+        };
+        console.error("DEBUG: Detailed Error Object:", JSON.stringify(diagnostics, null, 2));
+        
         return new Response(JSON.stringify({ 
-            error: errorMessage,
-            details: error?.statusText || error?.name || "Check backend logs for full stack trace"
+            error: diagnostics.message || "Request failed",
+            details: diagnostics
         }), { status: 500 });
     }
 };
