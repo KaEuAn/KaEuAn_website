@@ -1,673 +1,344 @@
 <div id="cognitive-bias-root" class="not-prose"></div>
 
 <style>
-/* CSS Variables linking to Blowfish Theme variables for perfect integration */
-:root {
-  --cb-primary: rgba(var(--color-primary-500, 59, 130, 246), 1);
-  --cb-primary-hover: rgba(var(--color-primary-600, 37, 99, 235), 1);
-  --cb-secondary: rgba(var(--color-secondary-500, 168, 85, 247), 1);
-  --cb-bg-light: #ffffff;
-  --cb-bg-dark: #121212;
-  --cb-text-light: #1f2937;
-  --cb-text-dark: #f9fafb;
-}
+    /* Modern Interactive Highlights */
+    .highlight-container {
+        line-height: 1.8;
+        font-size: 1.1rem;
+        white-space: pre-wrap;
+    }
 
-/* Core Layout */
-.cb-root {
-  font-family: inherit;
-  width: 100%;
-  max-width: 1024px;
-  margin: 3rem auto;
-  box-sizing: border-box;
-  color: var(--cb-text-light);
-}
-.dark .cb-root { color: var(--cb-text-dark); }
+    .highlight-fragment {
+        position: relative;
+        cursor: help;
+        border-radius: 4px;
+        padding: 2px 0;
+        transition: all 0.2s ease;
+    }
 
-/* Typography */
-.cb-header { text-align: center; margin-bottom: 3rem; }
-.cb-title {
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  font-weight: 900;
-  line-height: 1.1;
-  background: linear-gradient(135deg, var(--cb-primary), var(--cb-secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--cb-primary); /* fallback */
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.2em;
-}
-.cb-subtitle {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  color: #4b5563;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-.dark .cb-subtitle { color: #9ca3af; }
+    .highlight-red {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-bottom: 2px solid rgba(239, 68, 68, 0.5);
+    }
+    .highlight-red:hover {
+        background-color: rgba(239, 68, 68, 0.2);
+    }
 
-/* Main Panel (Glassmorphism) */
-.cb-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 2.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1);
-  border: 1px solid rgba(255,255,255,0.8);
-}
-.dark .cb-panel {
-  background: rgba(30, 30, 30, 0.6);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-}
+    .highlight-green {
+        background-color: rgba(34, 197, 94, 0.1);
+        border-bottom: 2px solid rgba(34, 197, 94, 0.5);
+    }
+    .highlight-green:hover {
+        background-color: rgba(34, 197, 94, 0.2);
+    }
 
-/* Textarea */
-.cb-textarea-wrapper { position: relative; }
-.cb-textarea {
-  width: 100%;
-  min-height: 250px;
-  padding: 1.5rem;
-  font-size: 1.125rem;
-  line-height: 1.6;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 2px solid #e5e7eb;
-  color: var(--cb-text-light);
-  resize: vertical;
-  outline: none;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-}
-.dark .cb-textarea {
-  background: rgba(15, 15, 15, 0.8);
-  border-color: #374151;
-  color: var(--cb-text-dark);
-}
-.cb-textarea:focus {
-  border-color: var(--cb-primary);
-  box-shadow: 0 0 0 4px rgba(var(--color-primary-500, 59, 130, 246), 0.15);
-}
+    /* Glassmorphism Tooltips */
+    .tooltip-content {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%) translateY(10px);
+        width: 250px;
+        padding: 1rem;
+        background: rgba(var(--color-neutral-800, 31, 41, 55), 0.95);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        z-index: 100;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        font-size: 0.85rem;
+        font-weight: normal;
+        pointer-events: none;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        line-height: 1.4;
+    }
 
-/* Controls */
-.cb-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1.5rem;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-.cb-actions-left {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
+    .highlight-fragment:hover .tooltip-content {
+        visibility: visible;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 
-/* Toggle Switch */
-.cb-toggle-wrapper {
-  display: flex;
-  align-items: center;
-  background: #f3f4f6;
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-}
-.dark .cb-toggle-wrapper {
-  background: rgba(40, 40, 40, 0.8);
-  border-color: #374151;
-}
-.cb-toggle-label {
-  font-weight: 700;
-  font-size: 0.875rem;
-  margin-right: 1rem;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #4b5563;
-}
-.dark .cb-toggle-label { color: #d1d5db; }
+    .tooltip-header {
+        font-weight: 900;
+        margin-bottom: 0.5rem;
+        display: block;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+    }
 
-.cb-toggle-btn {
-  position: relative;
-  width: 3.5rem;
-  height: 2rem;
-  border-radius: 99px;
-  background: var(--cb-primary);
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.cb-toggle-btn[data-active="false"] { background: #cbd5e1; }
-.dark .cb-toggle-btn[data-active="false"] { background: #475569; }
-.cb-toggle-knob {
-  position: absolute;
-  top: 0.25rem;
-  left: 0.25rem;
-  width: 1.5rem;
-  height: 1.5rem;
-  background: white;
-  border-radius: 50%;
-  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.cb-toggle-btn[data-active="true"] .cb-toggle-knob { transform: translateX(1.5rem); }
+    .tooltip-red .tooltip-header { color: #f87171; }
+    .tooltip-green .tooltip-header { color: #4ade80; }
 
-/* Buttons */
-.cb-link-btn {
-  background: none;
-  border: none;
-  color: var(--cb-primary);
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition: color 0.2s;
-}
-.cb-link-btn:hover { color: var(--cb-primary-hover); }
+    @media (max-width: 640px) {
+        .tooltip-content {
+            width: 220px;
+            left: 0;
+            transform: translateY(10px);
+        }
+        .highlight-fragment:hover .tooltip-content {
+            transform: translateY(0);
+        }
+    }
 
-.cb-analyze-btn {
-  background: var(--cb-text-light);
-  color: white;
-  border: none;
-  padding: 1rem 2.5rem;
-  font-size: 1.125rem;
-  font-weight: 800;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
-}
-.dark .cb-analyze-btn {
-  background: white;
-  color: var(--cb-text-light);
-  box-shadow: 0 10px 15px -3px rgba(255,255,255,0.1);
-}
-.cb-analyze-btn:disabled {
-  background: #9ca3af;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-.dark .cb-analyze-btn:disabled { background: #4b5563; color: #9ca3af; }
-.cb-analyze-btn:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 25px -5px rgba(0,0,0,0.3);
-}
-.dark .cb-analyze-btn:not(:disabled):hover {
-  box-shadow: 0 15px 25px -5px rgba(255,255,255,0.2);
-}
-
-/* Results section */
-.cb-results { margin-top: 3rem; animation: cbFadeIn 0.5s ease-out; }
-.cb-results-header {
-  font-size: 2rem;
-  font-weight: 900;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid rgba(150,150,150,0.2);
-}
-
-.cb-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-@media (min-width: 768px) { .cb-grid { grid-template-columns: repeat(2, 1fr); } }
-
-.cb-card {
-  background: white;
-  border-radius: 20px;
-  padding: 1.5rem;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
-  border: 1px solid #e5e7eb;
-}
-.dark .cb-card {
-  background: #1f2937;
-  border-color: #374151;
-  box-shadow: 0 10px 30px -5px rgba(0,0,0,0.3);
-}
-
-.cb-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 6px;
-  height: 100%;
-}
-.cb-card.bias::before { background: #ef4444; }
-.cb-card.strength::before { background: #22c55e; }
-
-.cb-card-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  margin: 0 0 1rem 0;
-}
-.cb-card.bias .cb-card-title { color: #dc2626; }
-.dark .cb-card.bias .cb-card-title { color: #f87171; }
-.cb-card.strength .cb-card-title { color: #16a34a; }
-.dark .cb-card.strength .cb-card-title { color: #4ade80; }
-
-.cb-quote {
-  background: #fef2f2;
-  border-left: 3px solid #fca5a5;
-  padding: 1rem;
-  border-radius: 8px;
-  font-style: italic;
-  font-weight: 500;
-  margin-bottom: 1rem;
-  color: #7f1d1d;
-}
-.dark .cb-card.bias .cb-quote { background: rgba(220, 38, 38, 0.1); border-color: #991b1b; color: #fecaca; }
-
-.cb-card.strength .cb-quote {
-  background: #f0fdf4; border-color: #86efac; color: #14532d;
-}
-.dark .cb-card.strength .cb-quote { background: rgba(22, 163, 74, 0.1); border-color: #166534; color: #bbf7d0; }
-
-.cb-explanation {
-  background: #f9fafb;
-  padding: 1rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  line-height: 1.6;
-}
-.dark .cb-explanation { background: rgba(0,0,0,0.2); }
-
-/* Glossary Modal */
-.cb-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-.cb-modal {
-  background: var(--cb-bg-light);
-  width: 100%;
-  max-width: 640px;
-  max-height: 85vh;
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-}
-.dark .cb-modal { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); }
-.cb-modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.dark .cb-modal-header { border-color: #374151; }
-.cb-modal-header h2 { margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--cb-primary); }
-.cb-modal-close {
-  background: #f3f4f6; border: none; width: 40px; height: 40px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; color: #4b5563;
-}
-.dark .cb-modal-close { background: #374151; color: #d1d5db; }
-.cb-modal-search { padding: 1.5rem; border-bottom: 1px solid #e5e7eb; }
-.dark .cb-modal-search { border-color: #374151; }
-.cb-modal-search input {
-  width: 100%; padding: 1rem; border-radius: 12px; border: 2px solid #e5e7eb;
-  background: #f9fafb; outline: none; font-size: 1.125rem; box-sizing: border-box;
-}
-.dark .cb-modal-search input { background: #111827; border-color: #4b5563; color: white; }
-.cb-modal-content {
-  padding: 1.5rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1rem; background: #f9fafb;
-}
-.dark .cb-modal-content { background: #111827; }
-.cb-glossary-item {
-  background: white; border-radius: 16px; padding: 1.5rem; border: 1px solid #e5e7eb;
-}
-.dark .cb-glossary-item { background: #1f2937; border-color: #374151; }
-
-.cb-error {
-  margin-top: 1.5rem;
-  padding: 1rem 1.5rem;
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
-  border-radius: 12px;
-  color: #b91c1c;
-  font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  animation: cbShake 0.4s ease-in-out;
-}
-.dark .cb-error {
-  background: rgba(153, 27, 27, 0.2);
-  border-color: rgba(153, 27, 27, 0.3);
-  color: #f87171;
-}
-@keyframes cbShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-/* Utilities / Responsive fixes */
-@keyframes cbFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes cbSpin { to { transform: rotate(360deg); } }
-.cb-spinner { animation: cbSpin 1s linear infinite; }
-@media (max-width: 640px) {
-  .cb-panel { padding: 1.5rem; border-radius: 20px; }
-  .cb-controls { flex-direction: column; align-items: stretch; }
-  .cb-actions-left { width: 100%; justify-content: space-between; }
-  .cb-analyze-btn { margin-top: 2rem; width: 100%; }
-}
+    /* Dictionary Styles */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(var(--color-primary-500), 0.2); border-radius: 10px; }
 </style>
 
 <script type="module">
-import { h, Component, render } from 'https://esm.sh/preact@10.20.1';
-import htm from 'https://esm.sh/htm@3.1.1';
-import { useState, useCallback, useEffect, useMemo } from 'https://esm.sh/preact@10.20.1/hooks';
+    import { h, render } from 'https://esm.sh/preact';
+    import { useState, useCallback, useMemo } from 'https://esm.sh/preact/hooks';
+    import htm from 'https://esm.sh/htm';
 
-const html = htm.bind(h);
+    const html = htm.bind(h);
 
-const translations = {
-    en: {
-        title: 'Cognitive Bias Detector',
-        subtitle: 'Uncover hidden biases and identify strengths in your text using advanced AI.',
-        textAreaPlaceholder: 'Enter a paragraph, article, or statement here to analyze its underlying biases...',
-        thinkingMode: 'Deep Analysis',
-        viewGlossary: 'Bias Glossary',
-        analyzeText: 'Analyze Text',
-        analyzing: 'Analyzing...',
-        errorAnalysis: 'Failed to analyze the text. Please check your connection or try again later.',
-        errorEmptyText: 'Please enter some text to analyze.',
-        analysisResultTitle: 'Analysis Result',
-        analysisCompleteNoFindings: 'Analysis complete. No specific biases or notable strengths were detected.',
-        strengthTitle: 'Objective & Clear Statements',
-        glossaryTitle: 'Cognitive Bias Glossary',
-        searchPlaceholder: 'Search for a bias...',
-        definition: 'Definition',
-        example: 'Example',
-        impact: 'Impact',
-        noBiasesMatchingSearch: 'No biases found matching your search.',
-        glossary: {
-            "Decision-Making Biases": [
-                { name: 'Confirmation Bias', definition: 'The tendency to search for, interpret, favor, and recall information that confirms or supports one\'s preexisting beliefs or hypotheses.', example: 'I knew this project would succeed because I only paid attention to the positive feedback.', impact: 'Leads to poor decision-making by reinforcing initial assumptions.' },
-                { name: 'Anchoring Bias', definition: 'The tendency to rely too heavily on the first piece of information offered (the "anchor") when making decisions.', example: 'The first car salesman quoted $30,000. Every other offer now seems fantastic.', impact: 'Can lead to over- or undervaluing things based on an initial reference point.' },
-                { name: 'Bandwagon Effect', definition: 'The tendency for individuals to adopt certain behaviors, styles, or attitudes simply because others are doing so.', example: 'Everyone is investing in this new cryptocurrency, so it must be a good idea.', impact: 'Can stifle innovation and independent thought, leading to groupthink.' },
-                { name: 'Dunning-Kruger Effect', definition: 'The tendency for people with low ability at a task to overestimate their ability.', example: 'A beginner chess player believing they can easily beat a grandmaster.', impact: 'Prevents learning and leads to overconfidence in critical situations.' },
-                { name: 'Availability Heuristic', definition: 'The tendency to rely on immediate examples that come to a given person\'s mind when evaluating a specific topic.', example: 'Believing airplane crashes are highly common because you recently saw one on the news.', impact: 'Distorts risk assessment and leads to irrational fears.' },
-                { name: 'Sunk Cost Fallacy', definition: 'The tendency to continue investing in a losing proposition because of what it\'s already cost.', example: 'Staying in a terrible movie just because you paid for the ticket.', impact: 'Leads to wasted resources and poor strategic pivots.' }
-            ],
-            "Social Biases": [
-                { name: 'Ingroup Bias', definition: 'The tendency to favor one\'s own group over out-groups.', example: 'Hiring someone solely because they went to the same university as you.', impact: 'Can lead to discrimination and a lack of diversity.' },
-                { name: 'Fundamental Attribution Error', definition: 'The tendency for people to under-emphasize situational explanations for an individual\'s observed behavior while over-emphasizing dispositional and personality-based explanations.', example: 'Assuming someone who cut you off in traffic is a bad person, rather than realizing they might be rushing to the hospital.', impact: 'Causes unfair judgments and interpersonal conflict.' },
-                { name: 'Halo Effect', definition: 'The tendency for positive impressions of a person, company, brand or product in one area to positively influence one\'s opinion or feelings in other areas.', example: 'Assuming a physically attractive person is also smart and competent.', impact: 'Clouded judgment in performance reviews or hiring.' }
-            ],
-            "Memory Errors": [
-                { name: 'Hindsight Bias', definition: 'The tendency of people to overestimate their ability to have predicted an outcome that could not possibly have been predicted.', example: 'Saying "I knew it all along" after an unpredictable stock market crash.', impact: 'Creates an illusion of control and prevents learning from surprises.' },
-                { name: 'Misinformation Effect', definition: 'The tendency for post-event information to interfere with the memory of the original event.', example: 'Remembering a yield sign as a stop sign after being asked "how fast were you going when you passed the stop sign?".', impact: 'Can lead to false eyewitness testimony.' }
-            ]
-        }
-    },
-    // ... skipping ru and pl for brevity of this code snippet, they would normally be loaded here
-};
-
-const getTranslations = (lang) => translations[lang] || translations.en;
-const currentLang = document.documentElement.lang.substring(0, 2) || 'en';
-
-const Glossary = ({ isOpen, onClose, t }) => {
-    if (!isOpen) return null;
-    const [searchTerm, setSearchTerm] = useState('');
-    const [expandedBiases, setExpandedBiases] = useState({});
-    
-    const items = t.glossary || translations.en.glossary;
-    
-    const filteredCategories = {};
-    Object.keys(items).forEach(category => {
-        const filteredBiases = items[category].filter(i => i.name.toLowerCase().includes(searchTerm.toLowerCase()));
-        if (filteredBiases.length > 0) {
-            filteredCategories[category] = filteredBiases;
-        }
-    });
-
-    const toggleExpand = (biasName) => {
-        setExpandedBiases(prev => ({ ...prev, [biasName]: !prev[biasName] }));
+    const logicDictionary = {
+        DecisionMaking: [
+            { name: "Confirmation Bias", desc: "Favoring information that confirms existing beliefs." },
+            { name: "Anchoring Bias", desc: "Relying too heavily on the first piece of information encountered." },
+            { name: "Sunk Cost Fallacy", desc: "Continuing an endeavor due to previously invested resources." }
+        ],
+        SocialBiases: [
+            { name: "Halo Effect", desc: "Impression in one area influencing opinion in another." },
+            { name: "In-group Bias", desc: "Favoring members of one's own group." }
+        ],
+        LogicErrors: [
+            { name: "Correlation vs Causation", desc: "Assuming that because two things happen together, one caused the other." },
+            { name: "Strawman Fallacy", desc: "Misrepresenting someone's argument to make it easier to attack." }
+        ]
     };
 
-    return html`
-        <div class="cb-modal-overlay">
-            <div class="cb-modal">
-                <div class="cb-modal-header">
-                    <h2>${t.glossaryTitle}</h2>
-                    <button class="cb-modal-close" onClick=${onClose}>✕</button>
-                </div>
-                <div class="cb-modal-search">
-                    <input type="text" placeholder=${t.searchPlaceholder} onInput=${e => setSearchTerm(e.currentTarget.value)} value=${searchTerm} />
-                </div>
-                <div class="cb-modal-content">
-                    ${Object.keys(filteredCategories).length > 0 ? Object.keys(filteredCategories).map(category => html`
-                        <div key=${category} style="margin-bottom:1.5rem">
-                            <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:1rem; border-bottom:2px solid rgba(var(--color-primary-500, 59, 130, 246), 0.3); padding-bottom:0.5rem; color:var(--cb-text-light)">
-                                <span class="dark:text-white">${category}</span>
-                            </h3>
-                            <div style="display:flex; flex-direction:column; gap:0.75rem">
-                                ${filteredCategories[category].map(item => html`
-                                    <div key=${item.name} class="cb-glossary-item" style="padding:0; overflow:hidden">
-                                        <button 
-                                            onClick=${() => toggleExpand(item.name)}
-                                            style="width:100%; text-align:left; padding:1.25rem; border:none; background:transparent; display:flex; justify-content:space-between; align-items:center; cursor:pointer; outline:none"
-                                        >
-                                            <span style="font-weight:800; font-size:1.125rem; color:var(--cb-primary)">${item.name}</span>
-                                            <span style="transition: transform 0.2s; color:var(--cb-primary); transform: ${expandedBiases[item.name] ? 'rotate(180deg)' : 'rotate(0)'}">▼</span>
-                                        </button>
-                                        
-                                        ${expandedBiases[item.name] && html`
-                                            <div style="padding:0 1.25rem 1.25rem 1.25rem; border-top:1px solid rgba(150,150,150,0.15); margin-top:0.5rem; background:rgba(150,150,150,0.03)">
-                                                <div style="margin-bottom:1rem; margin-top:1rem"><strong>${t.definition}:</strong> <p style="margin:0.25rem 0">${item.definition}</p></div>
-                                                ${item.example && html`<div style="margin-bottom:1rem"><strong>${t.example}:</strong> <p style="margin:0.25rem 0; font-style:italic; opacity:0.8">"${item.example}"</p></div>`}
-                                                ${item.impact && html`<div><strong>${t.impact || "Impact"}:</strong> <p style="margin:0.25rem 0">${item.impact}</p></div>`}
-                                            </div>
-                                        `}
-                                    </div>
-                                `)}
-                            </div>
-                        </div>
-                    `) : html`<p style="text-align:center; opacity:0.5; font-size:1.25rem; margin-top:2rem">${t.noBiasesMatchingSearch}</p>`}
-                </div>
-            </div>
-        </div>
-    `;
-};
+    const HighlightedText = ({ text, biases, strengths }) => {
+        const segments = useMemo(() => {
+            if (!text) return [];
+            const normText = text.replace(/\r\n/g, '\n');
+            const items = [
+                ...(biases || []).map(b => ({ ...b, type: 'bias', phrase: (b.phrase || "").replace(/\r\n/g, '\n') })),
+                ...(strengths || []).map(s => ({ ...s, type: 'strength', phrase: (s.phrase || "").replace(/\r\n/g, '\n') }))
+            ].filter(i => i.phrase && i.phrase.trim().length > 0);
 
-const App = () => {
-    const textDefaultEn = 'Confirmation bias is evident when people favor information that confirms their existing beliefs. However, this report presents the data objectively. For example, after buying a new phone, a person might only read positive reviews to justify their purchase, which is a clear case of anchoring on their initial decision.';
-    
-    const [inputText, setInputText] = useState(textDefaultEn);
-    const [analysisResult, setAnalysisResult] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isThinkingMode, setIsThinkingMode] = useState(false);
-    const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
-    const [errorKey, setErrorKey] = useState(null);
-    const [backendError, setBackendError] = useState(null);
-
-    const t = useMemo(() => getTranslations(currentLang), [currentLang]);
-
-    const handleAnalyzeClick = useCallback(async () => {
-        if (!inputText.trim()) { setErrorKey("errorEmptyText"); return; }
-        setIsLoading(true); setErrorKey(null); setBackendError(null); setAnalysisResult(null);
-
-        try {
-            const response = await fetch("/.netlify/functions/analyze", {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: inputText, language: currentLang, isThinkingMode })
+            const matches = [];
+            items.forEach(item => {
+                let lastIdx = 0;
+                while (true) {
+                    const idx = normText.indexOf(item.phrase, lastIdx);
+                    if (idx === -1) break;
+                    matches.push({ start: idx, end: idx + item.phrase.length, ...item });
+                    lastIdx = idx + 1;
+                }
             });
 
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || `HTTP error ${response.status}`);
+            matches.sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
+            const unique = [];
+            let currentEnd = -1;
+            matches.forEach(m => {
+                if (m.start >= currentEnd) {
+                    unique.push(m);
+                    currentEnd = m.end;
+                }
+            });
+
+            const res = [];
+            let cursor = 0;
+            unique.forEach(m => {
+                if (m.start > cursor) res.push({ type: 'text', content: normText.slice(cursor, m.start) });
+                res.push({ type: m.type, content: m.phrase, detail: m });
+                cursor = m.end;
+            });
+            if (cursor < normText.length) res.push({ type: 'text', content: normText.slice(cursor) });
+            return res;
+        }, [text, biases, strengths]);
+
+        if (!text) return null;
+
+        return html`
+            <div class="highlight-container">
+                ${segments.map(seg => {
+                    if (seg.type === 'text') return seg.content;
+                    const isBias = seg.type === 'bias';
+                    const detail = seg.detail;
+                    return html`
+                        <span class="highlight-fragment ${isBias ? 'highlight-red' : 'highlight-green'}">
+                            ${seg.content}
+                            <span class="tooltip-content ${isBias ? 'tooltip-red' : 'tooltip-green'}">
+                                <span class="tooltip-header">${isBias ? (detail.biasName || 'Bias') : 'Strength'}</span>
+                                ${isBias ? detail.explanation : detail.endorsement}
+                            </span>
+                        </span>
+                    `;
+                })}
+            </div>
+        `;
+    };
+
+    const App = () => {
+        const [inputText, setInputText] = useState("I am always right because I never make mistakes. This is a very objective statement.");
+        const [analysisResult, setAnalysisResult] = useState(null);
+        const [lastAnalyzedText, setLastAnalyzedText] = useState("");
+        const [isLoading, setIsLoading] = useState(false);
+        const [isThinkingMode, setIsThinkingMode] = useState(false);
+        const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
+        const [backendError, setBackendError] = useState(null);
+
+        const handleAnalyze = async () => {
+            if (!inputText.trim()) return;
+            setIsLoading(true);
+            setAnalysisResult(null);
+            setBackendError(null);
+            setLastAnalyzedText(inputText);
+
+            try {
+                const response = await fetch('/.netlify/functions/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: inputText, language: 'en', isThinkingMode })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({ error: "Server Error" }));
+                    throw new Error(JSON.stringify(err));
+                }
+
+                setAnalysisResult(await response.json());
+            } catch (err) {
+                console.error(err);
+                try {
+                    setBackendError(JSON.parse(err.message));
+                } catch {
+                    setBackendError({ error: err.message });
+                }
+            } finally {
+                setIsLoading(false);
             }
+        };
 
-            setAnalysisResult(await response.json());
-        } catch (err) {
-            setErrorKey("errorAnalysis");
-            setBackendError(err.message);
-        } finally { setIsLoading(false); }
-    }, [inputText, isThinkingMode, currentLang]);
+        return html`
+            <div class="space-y-8 max-w-5xl mx-auto px-4 py-12">
+                <div class="text-center space-y-4">
+                    <h2 class="text-4xl md:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
+                        {{ i18n "cognitive_detector.title" }}
+                    </h2>
+                    <p class="text-neutral-500 italic">{{ i18n "cognitive_detector.subtitle" }}</p>
+                </div>
 
-    return html`
-        <div class="cb-root">
-            <header class="cb-header">
-                <h1 class="cb-title">${t.title}</h1>
-                <p class="cb-subtitle">${t.subtitle}</p>
-            </header>
-
-            <main>
-                <div class="cb-panel">
-                    <div class="cb-textarea-wrapper">
-                        <textarea
+                <div class="space-y-4">
+                    <div class="relative group">
+                        <textarea 
+                            class="w-full h-80 p-8 rounded-3xl border-2 border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:border-primary-500 transition-all outline-none resize-none shadow-xl text-lg"
                             value=${inputText}
-                            onInput=${e => setInputText(e.currentTarget.value)}
-                            placeholder=${t.textAreaPlaceholder}
-                            class="cb-textarea"
-                            disabled=${isLoading}
+                            onInput=${(e) => setInputText(e.target.value)}
+                            placeholder="Enter text to analyze..."
                         ></textarea>
-                    </div>
-
-                    <div class="cb-controls">
-                        <div class="cb-actions-left">
-                            <div class="cb-toggle-wrapper">
-                                <label class="cb-toggle-label" onClick=${() => setIsThinkingMode(!isThinkingMode)}>
-                                    ${t.thinkingMode}
-                                </label>
-                                <button class="cb-toggle-btn" data-active=${isThinkingMode} onClick=${() => setIsThinkingMode(!isThinkingMode)}>
-                                    <span class="cb-toggle-knob"></span>
-                                </button>
-                            </div>
-                            <button class="cb-link-btn" onClick=${() => setIsGlossaryOpen(true)}>
-                                ${t.viewGlossary} →
+                        
+                        <div class="absolute bottom-6 right-6 flex items-center space-x-4">
+                            <button 
+                                onClick=${() => setIsThinkingMode(!isThinkingMode)}
+                                class="px-4 py-2 rounded-full border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-sm font-bold flex items-center space-x-2"
+                            >
+                                <span class="h-2 w-2 rounded-full ${isThinkingMode ? 'bg-secondary-500 animate-pulse' : 'bg-primary-500'}"></span>
+                                <span>${isThinkingMode ? "Deep Analysis" : "Fast Analysis"}</span>
+                            </button>
+                            
+                            <button 
+                                onClick=${handleAnalyze}
+                                disabled=${isLoading}
+                                class="px-8 py-3 rounded-2xl bg-primary-500 text-white font-black shadow-lg hover:shadow-primary-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                            >
+                                ${isLoading ? html`<span class="animate-spin inline-block mr-2">⟳</span>` : ''}
+                                {{ i18n "cognitive_detector.analyze_btn" }}
                             </button>
                         </div>
-                        
-                        <button class="cb-analyze-btn" disabled=${isLoading} onClick=${handleAnalyzeClick}>
-                            ${isLoading ? html`<svg class="cb-spinner" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> ${t.analyzing}` : html`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> ${t.analyzeText}`}
-                        </button>
                     </div>
                 </div>
 
-                ${errorKey && html`
-                    <div class="cb-error">
-                        <div style="display:flex; align-items:center; gap:0.5rem">
-                            <span style="font-size:1.25rem">⚠</span> 
-                            <span>${t[errorKey]}</span>
-                        </div>
-                        ${backendError && html`
-                            <div style="margin-top:0.5rem; padding-top:0.75rem; border-top:1px solid rgba(185,28,28,0.1); font-family:monospace; font-size:0.875rem; opacity:0.9">
-                                <div style="font-weight:700; margin-bottom:0.25rem; font-size:0.75rem; text-transform:uppercase; opacity:0.6">Debug Information:</div>
-                                <div style="word-break:break-all; line-height:1.4">
-                                    ${backendError.includes('401') ? 'API Authentication Failed (401 Unauthorized)' : backendError}
-                                </div>
-                            </div>
-                        `}
-                    </div>
-                `}
-
-                ${analysisResult && html`
-                    <div class="cb-results">
-                        <div class="cb-panel">
-                            <h2 class="cb-results-header">${t.analysisResultTitle}</h2>
-                            
-                            ${analysisResult.biases && analysisResult.biases.length > 0 && html`
+                <div class="rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+                    <button onClick=${() => setIsGlossaryOpen(!isGlossaryOpen)} class="w-full p-4 flex justify-between items-center font-bold">
+                        <span>📚 {{ i18n "cognitive_detector.dictionary_title" }}</span>
+                        <span class="transform transition-transform ${isGlossaryOpen ? 'rotate-180' : ''}">▼</span>
+                    </button>
+                    ${isGlossaryOpen && html`
+                        <div class="p-6 h-64 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-neutral-100 dark:border-neutral-800">
+                            ${Object.entries(logicDictionary).map(([cat, items]) => html`
                                 <div>
-                                    <h3 style="color:#ef4444; font-size:1.5rem; display:flex; align-items:center; gap:0.5rem; margin-bottom:1.5rem">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                                        Biases Detected
-                                    </h3>
-                                    <div class="cb-grid">
-                                        ${analysisResult.biases.map(bias => html`
-                                            <div class="cb-card bias">
-                                                <h4 class="cb-card-title">${bias.biasName}</h4>
-                                                <div class="cb-quote">"${bias.phrase}"</div>
-                                                <div class="cb-explanation">${bias.explanation}</div>
-                                            </div>
-                                        `)}
-                                    </div>
+                                    <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400 mb-3">${cat}</h4>
+                                    ${items.map(i => html`
+                                        <div class="mb-3">
+                                            <div class="text-primary-500 font-bold text-sm">${i.name}</div>
+                                            <div class="text-xs opacity-60">${i.desc}</div>
+                                        </div>
+                                    `)}
                                 </div>
-                            `}
-                            
-                            ${analysisResult.strengths && analysisResult.strengths.length > 0 && html`
-                                <div style="margin-top:3rem">
-                                    <h3 style="color:#22c55e; font-size:1.5rem; display:flex; align-items:center; gap:0.5rem; margin-bottom:1.5rem">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                        <${HighlightedText} 
-                                            text=${lastAnalyzedText} 
-                                            biases=${analysisResult.biases} 
-                                            strengths=${analysisResult.strengths} 
-                                        />
-
-                                        <!-- Fallback for items that couldn't be matched in text -->
-                                        ${(() => {
-                                            const textLower = lastAnalyzedText.toLowerCase();
-                                            const unmatchedBiases = (analysisResult.biases || []).filter(b => !textLower.includes(b.phrase.toLowerCase()));
-                                            const unmatchedStrengths = (analysisResult.strengths || []).filter(s => !textLower.includes(s.phrase.toLowerCase()));
-                                            
-                                            if (unmatchedBiases.length === 0 && unmatchedStrengths.length === 0) return null;
-
-                                            return html`
-                                                <div class="mt-8 pt-6 border-t border-neutral-100 dark:border-neutral-800">
-                                                    <h4 class="text-sm font-black uppercase tracking-widest text-neutral-400 mb-4">Additional Insights</h4>
-                                                    <div class="space-y-2">
-                                                        ${unmatchedBiases.map(b => html`
-                                                            <div class="text-sm text-red-600 dark:text-red-400 flex items-start space-x-2">
-                                                                <span class="mt-1">●</span>
-                                                                <span><strong class="uppercase text-xs">[${b.biasName}]</strong>: ${b.explanation}</span>
-                                                            </div>
-                                                        `)}
-                                                        ${unmatchedStrengths.map(s => html`
-                                                            <div class="text-sm text-primary-600 dark:text-primary-400 flex items-start space-x-2">
-                                                                <span class="mt-1">●</span>
-                                                                <span>${s.endorsement}</span>
-                                                            </div>
-                                                        `)}
-                                                    </div>
-                                                </div>
-                                            `;
-                                        })()}
-                                        ${t.strengthTitle}
-                                    </h3>
-                                    <div class="cb-grid">
-                                        ${analysisResult.strengths.map(str => html`
-                                            <div class="cb-card strength">
-                                                <div class="cb-quote">"${str.phrase}"</div>
-                                                <div class="cb-explanation">✓ ${str.endorsement}</div>
-                                            </div>
-                                        `)}
-                                    </div>
-                                </div>
-                            `}
-                            
-                            ${(!analysisResult.biases?.length && !analysisResult.strengths?.length) && html`
-                                <p style="text-align:center; padding:3rem; opacity:0.6; font-size:1.25rem">${t.analysisCompleteNoFindings}</p>
-                            `}
+                            `)}
                         </div>
+                    `}
+                </div>
+
+                ${(isLoading || analysisResult || backendError) && html`
+                    <div id="results-area" class="animate-fade-in py-12 border-t-2 border-dashed border-neutral-100 dark:border-neutral-800">
+                        ${isLoading ? html`
+                            <div class="text-center py-20 space-y-4">
+                                <div class="w-16 h-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mx-auto"></div>
+                                <p class="text-xl font-bold animate-pulse">{{ i18n "cognitive_detector.analyzing" }}</p>
+                            </div>
+                        ` : analysisResult ? html`
+                            <div class="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-8 md:p-12 space-y-8">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-2xl">🔍</span>
+                                    <h3 class="text-2xl font-black italic">{{ i18n "cognitive_detector.results_title" }}</h3>
+                                </div>
+
+                                <${HighlightedText} 
+                                    text=${lastAnalyzedText} 
+                                    biases=${analysisResult.biases} 
+                                    strengths=${analysisResult.strengths} 
+                                />
+
+                                ${(() => {
+                                    const textLower = (lastAnalyzedText || "").toLowerCase();
+                                    const unmatchedBiases = (analysisResult.biases || []).filter(b => b.phrase && !textLower.includes(b.phrase.toLowerCase()));
+                                    const unmatchedStrengths = (analysisResult.strengths || []).filter(s => s.phrase && !textLower.includes(s.phrase.toLowerCase()));
+                                    if (unmatchedBiases.length === 0 && unmatchedStrengths.length === 0) return null;
+                                    return html`
+                                        <div class="mt-8 pt-8 border-t border-neutral-100 dark:border-neutral-800 space-y-4">
+                                            <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400">Contextual Insights</h4>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                ${unmatchedBiases.map(b => html`
+                                                    <div class="p-4 bg-red-500/5 rounded-2xl border border-red-500/10 text-sm">
+                                                        <strong class="text-red-500 uppercase text-xs block mb-1">${b.biasName}</strong>
+                                                        ${b.explanation}
+                                                    </div>
+                                                `)}
+                                                ${unmatchedStrengths.map(s => html`
+                                                    <div class="p-4 bg-primary-500/5 rounded-2xl border border-primary-500/10 text-sm">
+                                                        <strong class="text-primary-500 uppercase text-xs block mb-1">Strength</strong>
+                                                        ${s.endorsement}
+                                                    </div>
+                                                `)}
+                                            </div>
+                                        </div>
+                                    `;
+                                })()}
+                            </div>
+                        ` : backendError ? html`
+                            <div class="bg-red-50 dark:bg-red-900/10 border-2 border-red-500/20 rounded-3xl p-12 text-center space-y-6">
+                                <div class="text-5xl">⚠️</div>
+                                <h3 class="text-2xl font-bold text-red-600">{{ i18n "cognitive_detector.error_generic" }}</h3>
+                                <pre class="p-4 bg-white dark:bg-black/20 rounded-xl text-left text-xs font-mono overflow-auto max-h-40">${JSON.stringify(backendError, null, 2)}</pre>
+                                <button onClick=${handleAnalyze} class="px-12 py-4 bg-red-500 text-white rounded-2xl font-black shadow-lg">Retry Analysis</button>
+                            </div>
+                        ` : ''}
                     </div>
                 `}
-            </main>
-        </div>
-        <${Glossary} isOpen=${isGlossaryOpen} onClose=${() => setIsGlossaryOpen(false)} t=${t} />
-    `;
-};
+            </div>
+        `;
+    };
 
-render(html`<${App} />`, document.getElementById('cognitive-bias-root'));
+    render(html`<${App} />`, document.getElementById('cognitive-bias-root'));
 </script>

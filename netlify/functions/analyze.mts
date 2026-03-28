@@ -73,9 +73,9 @@ export default async (req: Request, context: Context) => {
         const { text, language, isThinkingMode } = body;
 
         const targetModel = isThinkingMode ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${apiKey}`;
+        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${targetModel}:generateContent?key=${apiKey}`;
 
-        console.log(`DEBUG: Analysis starting with ${targetModel} (v1beta)...`);
+        console.log(`DEBUG: Analysis starting with ${targetModel}...`);
 
         const response = await fetch(apiUrl, {
             method: "POST",
