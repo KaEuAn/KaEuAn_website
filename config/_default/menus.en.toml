@@ -1,7 +1,17 @@
 [[main]]
+  name = "About"
+  url = "/about/"
+  weight = 5
+
+[[main]]
   name = "News"
   url = "/posts/"
   weight = 10
+
+[[main]]
+  name = "Projects"
+  url = "/projects/"
+  weight = 12
 
 [[main]]
   name = "Cognitive Bias"

@@ -1,7 +1,17 @@
 [[main]]
+  name = "Обо мне"
+  url = "/ru/about/"
+  weight = 5
+
+[[main]]
   name = "Новости"
   url = "/ru/posts/"
   weight = 10
+
+[[main]]
+  name = "Проекты"
+  url = "/ru/projects/"
+  weight = 12
 
 [[main]]
   name = "Когнитивные Искажения"

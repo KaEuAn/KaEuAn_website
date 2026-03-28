@@ -164,3 +164,14 @@ forgejoDefaultServer = "https://v8.next.forgejo.org"
 [rssnext]
   # feedId = ""
   # userId = ""
+
+[author]
+  name = "Jatozan"
+  image = "img/author.jpg"
+  headline = "Digital Architect & Cognitive Science Enthusiast"
+  bio = "Passionate about building modern digital experiences and exploring the intersection of technology and human psychology."
+  links = [
+    { telegram = "https://t.me/phantom_of_irony" },
+    { instagram = "https://www.instagram.com/jatozan" },
+    { buymeacoffee = "https://www.buymeacoffee.com/jatozan" }
+  ]

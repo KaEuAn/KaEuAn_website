@@ -1,14 +1,26 @@
 +++
-title = "My public social links"
+title = "About Me"
 date = 2023-10-27T10:00:00+06:00 
 draft = false
+showAuthor = true
+heroStyle = "background"
 +++
 
-## Welcome to Jatozan website!
+## Hello, I'm Jatozan! 🌐
 
-Hi! Here you can read a bit about me and my interests.
+Welcome to my digital corner. I am a **Digital Architect** and **Cognitive Science Enthusiast**. My work focuses on bridging the gap between high-performance systems and intuitive human interaction.
 
-* **Telegram-канал:** [Агония сарказма](https://t.me/phantom_of_irony)
-* **Instagram:** [Instagram](https://www.instagram.com/jatozan)
+### 🛠 Core Expertise
+- **Web Development**: Specialized in creating scalable, responsive applications.
+- **Cognitive Science**: Integrating psychological principles and bias detection into modern UI/UX.
+- **Multilingual Systems**: Building cross-border platforms for global audiences (Fluent in EN/RU/PL).
 
-Subsctibe to keep in touch!
+### 🌟 My Interests
+Beyond the terminal, I'm deeply fascinated by the mechanics of human decision-making—which led to the creation of the **Cognitive Bias Detector**—and the intersection of philosophy and decentralized technology.
+
+---
+
+### Stay in Touch!
+* **Telegram:** [Агония сарказма](https://t.me/phantom_of_irony)
+* **Instagram:** [@jatozan](https://www.instagram.com/jatozan)
+* **Support my work:** [Buy Me a Coffee](https://www.buymeacoffee.com/jatozan)

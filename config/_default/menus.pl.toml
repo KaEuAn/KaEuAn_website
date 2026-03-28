@@ -1,7 +1,17 @@
 [[main]]
-  name = "Новости"
+  name = "O mnie"
+  url = "/pl/about/"
+  weight = 5
+
+[[main]]
+  name = "Aktualności"
   url = "/pl/posts/"
   weight = 10
+
+[[main]]
+  name = "Projekty"
+  url = "/pl/projects/"
+  weight = 12
 
 [[main]]
   name = "Błąd Poznawczy"
