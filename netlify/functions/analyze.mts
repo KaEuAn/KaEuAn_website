@@ -39,8 +39,14 @@ export default async (req: Request, context: Context) => {
         return new Response("Method Not Allowed", { status: 405 });
     }
 
-    // Step 1: Resolve API Key
-    const rawKey = process.env.SERVER_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    // Step 1: Resolve API Key (Universal for Deno/Node)
+    const getEnv = (name: string) => {
+        // @ts-ignore: Deno and process might not be defined in all environments
+        return (typeof Deno !== "undefined" ? Deno.env.get(name) : undefined) || 
+               (typeof process !== "undefined" ? process.env[name] : undefined);
+    };
+
+    const rawKey = getEnv("SERVER_GEMINI_API_KEY") || getEnv("GEMINI_API_KEY");
     const apiKey = rawKey?.trim();
 
     if (!apiKey) {

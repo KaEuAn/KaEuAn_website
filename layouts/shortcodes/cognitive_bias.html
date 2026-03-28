@@ -510,13 +510,28 @@
                     })
                 });
 
-                const data = await response.json();
-                if (!response.ok) throw new Error(JSON.stringify(data));
-                setAnalysisResult(data);
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        setBackendError(data);
+                    } else {
+                        setAnalysisResult(data);
+                    }
+                } else {
+                    // Raw text error (likely a backend crash)
+                    const rawText = await response.text();
+                    if (!response.ok) {
+                        setBackendError({ error: "System Crash (Raw)", details: rawText });
+                    } else {
+                         // Fallback in case of success with wrong content type
+                        try { setAnalysisResult(JSON.parse(rawText)); }
+                        catch { setBackendError({ error: "Invalid Response Format", details: rawText }); }
+                    }
+                }
             } catch (err) {
                 console.error("ANALYSIS FAILED:", err);
-                try { setBackendError(JSON.parse(err.message)); }
-                catch { setBackendError({ error: "System Error", details: err.message }); }
+                setBackendError({ error: "Network or Script Error", details: err.message });
             } finally { setIsLoading(false); }
         };
 
