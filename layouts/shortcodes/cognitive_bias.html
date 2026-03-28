@@ -610,6 +610,40 @@ const App = () => {
                                 <div style="margin-top:3rem">
                                     <h3 style="color:#22c55e; font-size:1.5rem; display:flex; align-items:center; gap:0.5rem; margin-bottom:1.5rem">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                        <${HighlightedText} 
+                                            text=${lastAnalyzedText} 
+                                            biases=${analysisResult.biases} 
+                                            strengths=${analysisResult.strengths} 
+                                        />
+
+                                        <!-- Fallback for items that couldn't be matched in text -->
+                                        ${(() => {
+                                            const textLower = lastAnalyzedText.toLowerCase();
+                                            const unmatchedBiases = (analysisResult.biases || []).filter(b => !textLower.includes(b.phrase.toLowerCase()));
+                                            const unmatchedStrengths = (analysisResult.strengths || []).filter(s => !textLower.includes(s.phrase.toLowerCase()));
+                                            
+                                            if (unmatchedBiases.length === 0 && unmatchedStrengths.length === 0) return null;
+
+                                            return html`
+                                                <div class="mt-8 pt-6 border-t border-neutral-100 dark:border-neutral-800">
+                                                    <h4 class="text-sm font-black uppercase tracking-widest text-neutral-400 mb-4">Additional Insights</h4>
+                                                    <div class="space-y-2">
+                                                        ${unmatchedBiases.map(b => html`
+                                                            <div class="text-sm text-red-600 dark:text-red-400 flex items-start space-x-2">
+                                                                <span class="mt-1">●</span>
+                                                                <span><strong class="uppercase text-xs">[${b.biasName}]</strong>: ${b.explanation}</span>
+                                                            </div>
+                                                        `)}
+                                                        ${unmatchedStrengths.map(s => html`
+                                                            <div class="text-sm text-primary-600 dark:text-primary-400 flex items-start space-x-2">
+                                                                <span class="mt-1">●</span>
+                                                                <span>${s.endorsement}</span>
+                                                            </div>
+                                                        `)}
+                                                    </div>
+                                                </div>
+                                            `;
+                                        })()}
                                         ${t.strengthTitle}
                                     </h3>
                                     <div class="cb-grid">
