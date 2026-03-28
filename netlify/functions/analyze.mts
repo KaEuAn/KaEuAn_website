@@ -75,7 +75,10 @@ export default async (req: Request, context: Context) => {
             return new Response(JSON.stringify({ error: "Text is required" }), { status: 400 });
         }
 
-        const ai = new GoogleGenAI({ apiKey });
+        const ai = new GoogleGenAI({ 
+            apiKey,
+            baseUrl: "https://generativelanguage.googleapis.com"
+        });
         const modelName = isThinkingMode ? 'gemini-3.1-pro' : 'gemini-3-flash';
 
         const prompt = `Analyze the following text. Identify phrases demonstrating cognitive biases AND phrases that are strengths (e.g., objective, well-reasoned, clear).
