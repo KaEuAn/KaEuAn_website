@@ -18,15 +18,15 @@
   max-width: 1024px;
   margin: 3rem auto;
   box-sizing: border-box;
-  color: var(--cb-text-light);
 }
-.dark .cb-root { color: var(--cb-text-dark); }
 
-.cb-header { text-align: center; margin-bottom: 3rem; }
+.cb-header { text-align: center; margin-bottom: 3.5rem; }
+
+/* FIXED TITLE: display:block + fit-content for proper clipping */
 .cb-title {
   display: block;
   width: fit-content;
-  margin: 0 auto 1rem auto;
+  margin: 0 auto 1.5rem auto;
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 900;
   line-height: 1.1;
@@ -35,14 +35,17 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  padding-bottom: 0.2em;
+  padding-bottom: 0.2rem;
 }
+
 .cb-subtitle {
   font-size: clamp(1rem, 2vw, 1.25rem);
   color: #4b5563;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
+  font-style: italic;
+  opacity: 0.8;
 }
 .dark .cb-subtitle { color: #9ca3af; }
 
@@ -51,26 +54,27 @@
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 2.5rem;
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1);
   border: 1px solid rgba(255,255,255,0.8);
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
+  position: relative;
 }
 .dark .cb-panel {
-  background: rgba(30,30,30, 0.6);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(30, 30, 30, 0.6);
+  border: 1px solid rgba(255,255,255,0.1);
   box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
 }
 
-/* Textarea with High Contrast */
+/* High-Contrast Inputs */
 .cb-textarea {
   width: 100%;
-  min-height: 250px;
-  padding: 1.5rem;
+  min-height: 280px;
+  padding: 1.75rem;
   font-size: 1.125rem;
   line-height: 1.6;
-  border-radius: 16px;
+  border-radius: 20px;
   background: #ffffff;
   border: 2px solid #e5e7eb;
   color: var(--cb-text-light);
@@ -80,7 +84,7 @@
   resize: vertical;
 }
 .dark .cb-textarea {
-  background: rgba(15,15,15, 0.8);
+  background: rgba(15, 15, 15, 0.85);
   border-color: #374151;
   color: var(--cb-text-dark);
 }
@@ -89,7 +93,7 @@
   box-shadow: 0 0 0 4px rgba(var(--color-primary-500), 0.15);
 }
 
-/* Control Buttons & Toggles */
+/* Control Bar Layout */
 .cb-controls {
   display: flex;
   justify-content: space-between;
@@ -99,6 +103,14 @@
   flex-wrap: wrap;
 }
 
+.cb-actions-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Toggle Stylings */
 .cb-toggle-wrapper {
   display: flex;
   align-items: center;
@@ -108,16 +120,17 @@
   border: 1px solid #e5e7eb;
 }
 .dark .cb-toggle-wrapper {
-  background: rgba(40,40,40, 0.8);
+  background: rgba(45, 45, 45, 0.8);
   border-color: #374151;
 }
-
 .cb-toggle-label {
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   margin-right: 1rem;
   cursor: pointer;
   color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 .dark .cb-toggle-label { color: #d1d5db; }
 
@@ -129,7 +142,7 @@
   background: var(--cb-primary);
   border: none;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .cb-toggle-btn[data-active="false"] { background: #cbd5e1; }
 .dark .cb-toggle-btn[data-active="false"] { background: #475569; }
@@ -143,76 +156,139 @@
   background: white;
   border-radius: 50%;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 .cb-toggle-btn[data-active="true"] .cb-toggle-knob { transform: translateX(1.5rem); }
 
+/* The Action Button (Analyze) */
 .cb-analyze-btn {
   background: var(--cb-text-light);
   color: white;
   border: none;
-  padding: 1rem 2.5rem;
+  padding: 1.125rem 3rem;
   font-size: 1.125rem;
-  font-weight: 800;
-  border-radius: 16px;
+  font-weight: 900;
+  border-radius: 18px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
+  box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
 }
 .dark .cb-analyze-btn {
   background: white;
   color: var(--cb-text-light);
 }
-.cb-analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.cb-analyze-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(0,0,0,0.3);
+}
+.cb-analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
-/* 2. INTERACTIVE HIGHLIGHTING & TOOLTIPS */
+/* 2. GLOSSARY MODAL */
+.cb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.cb-modal {
+  width: 100%;
+  max-width: 720px;
+  max-height: 85vh;
+  background: var(--cb-bg-light);
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6);
+}
+.dark .cb-modal { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); }
+.cb-modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid rgba(150,150,150,0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cb-modal-content {
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+.cb-glossary-search {
+  margin-bottom: 2rem;
+  position: relative;
+}
+.cb-glossary-search input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  border: 2px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 1.1rem;
+  outline: none;
+}
+.dark .cb-glossary-search input { background: #111; border-color: #333; color: white; }
+
+/* 3. INTERACTIVE HIGHLIGHTING & TOOLTIPS */
 .cb-highlight-container {
   line-height: 1.8;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   white-space: pre-wrap;
   color: var(--cb-text-light);
 }
 .dark .cb-highlight-container { color: var(--cb-text-dark); }
 
 .cb-highlight-fragment {
+  display: inline-block; /* ESSENTIAL for reliable hover target */
   position: relative;
   cursor: help;
-  border-radius: 4px;
-  padding: 2px 0;
+  border-radius: 6px;
+  padding: 1px 2px;
+  transition: background 0.2s ease;
+  z-index: 10;
 }
+.cb-highlight-fragment:hover { z-index: 20; }
 
 .cb-highlight-red {
     background-color: rgba(239, 68, 68, 0.15);
-    border-bottom: 2px solid rgba(239, 68, 68, 0.6);
+    border-bottom: 2px solid rgba(239, 68, 68, 0.5);
 }
 .cb-highlight-green {
     background-color: rgba(34, 197, 94, 0.15);
-    border-bottom: 2px solid rgba(34, 197, 94, 0.6);
+    border-bottom: 2px solid rgba(34, 197, 94, 0.5);
 }
 
 .cb-tooltip-content {
     visibility: hidden;
     opacity: 0;
     position: absolute;
-    bottom: 125%;
+    bottom: 130%;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
-    width: 250px;
-    padding: 1rem;
+    width: 280px;
+    padding: 1.25rem;
     background: rgba(15, 23, 42, 0.98);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     color: white;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-    z-index: 9999;
-    transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 10000; /* Extremely high to sit above panels */
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     font-size: 0.9rem;
-    pointer-events: none;
-    line-height: 1.4;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: none; /* Crucial to prevent hover flicker */
+    line-height: 1.5;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .cb-highlight-fragment:hover .cb-tooltip-content {
@@ -226,32 +302,18 @@
     margin-bottom: 0.5rem;
     display: block;
     text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
 }
 .cb-tooltip-red .cb-tooltip-header { color: #f87171; }
 .cb-tooltip-green .cb-tooltip-header { color: #4ade80; }
 
-/* Extra Insights Fallback */
-.cb-insights-fallback {
-  margin-top: 2rem;
-  border-top: 1px solid rgba(150,150,150,0.1);
-  padding-top: 1.5rem;
-}
-.cb-insight-item {
-  display: flex;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-  opacity: 0.8;
-}
-
-/* Animations */
-@keyframes cbFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.cb-animate-fade { animation: cbFadeIn 0.4s ease-out forwards; }
+/* Utilities */
+.cb-animate-fade { animation: cbFadeIn 0.5s ease-out forwards; }
 @keyframes cbSpin { to { transform: rotate(360deg); } }
-.cb-spinner { animation: cbSpin 1s linear infinite; }
-
+.cb-spinner { animation: cbSpin 0.8s linear infinite; }
+.custom-scrollbar::-webkit-scrollbar { width: 5px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.3); border-radius: 10px; }
 </style>
 
 <script type="module">
@@ -260,6 +322,69 @@
     import htm from 'https://esm.sh/htm';
 
     const html = htm.bind(h);
+
+    const logicDictionary = {
+        "Decision-Making": [
+            { name: "Confirmation Bias", desc: "Favoring information that confirms existing beliefs.", ex: "I knew this project would succeed because I only focused on the positive feedback." },
+            { name: "Anchoring Bias", desc: "Relying too heavily on the first piece of information encountered.", ex: "The original price was $1000, so $700 feels like a steal, even if it's still overpriced." },
+            { name: "Sunk Cost Fallacy", desc: "Investing more in a losing endeavor due to previous investments.", ex: "I've already spent $400 on this car's repairs; I have to keep fixing it." }
+        ],
+        "Social Biases": [
+            { name: "Halo Effect", desc: "A positive impression in one area influencing opinion in another.", ex: "He's very charismatic, so he must be a competent leader." },
+            { name: "Ingroup Bias", desc: "Favoring members of one's own group over others.", ex: "Members of our team always have better ideas than the other departments." },
+            { name: "Fundamental Attribution Error", desc: "Overemphasizing personality traits for others' mistakes while using situational explanations for our own.", ex: "He was late because he's lazy. I was late because of the traffic." }
+        ],
+        "Memory & Logic": [
+            { name: "Hindsight Bias", desc: "Believing an event was predictable after it occurred.", ex: "I knew that stock would crash. It was so obvious in hindsight." },
+            { name: "Availability Heuristic", desc: "Overestimating the importance of information that is easy to recall.", ex: "Airplane crashes are very common; I just saw one on the news yesterday." }
+        ]
+    };
+
+    const Glossary = ({ isOpen, onClose, t }) => {
+        if (!isOpen) return null;
+        const [search, setSearch] = useState("");
+        const filtered = useMemo(() => {
+            const res = {};
+            Object.keys(logicDictionary).forEach(cat => {
+                const items = logicDictionary[cat].filter(i => 
+                    i.name.toLowerCase().includes(search.toLowerCase()) || 
+                    i.desc.toLowerCase().includes(search.toLowerCase())
+                );
+                if (items.length > 0) res[cat] = items;
+            });
+            return res;
+        }, [search]);
+
+        return html`
+            <div class="cb-modal-overlay" onClick=${onClose}>
+                <div class="cb-modal" onClick=${e => e.stopPropagation()}>
+                    <div class="cb-modal-header">
+                        <h2 style="margin:0; font-size:1.5rem; font-weight:900; color:var(--cb-primary)">📚 ${t.dictionary_title || 'Bias Dictionary'}</h2>
+                        <button onClick=${onClose} style="background:none; border:none; font-size:1.5rem; cursor:pointer; padding:0.5rem; opacity:0.5">✕</button>
+                    </div>
+                    <div class="cb-modal-content custom-scrollbar">
+                        <div class="cb-glossary-search">
+                            <input type="text" placeholder="Search for a bias..." value=${search} onInput=${e => setSearch(e.target.value)} />
+                        </div>
+                        ${Object.keys(filtered).length > 0 ? Object.keys(filtered).map(cat => html`
+                            <div key=${cat} style="margin-bottom:2rem">
+                                <h4 style="font-size:0.75rem; font-weight:900; text-transform:uppercase; color:gray; letter-spacing:0.15em; margin-bottom:1rem; border-bottom:1px solid rgba(150,150,150,0.1)">${cat}</h4>
+                                <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem">
+                                    ${filtered[cat].map(i => html`
+                                        <div key=${i.name} style="background:rgba(150,150,150,0.05); padding:1.25rem; border-radius:18px">
+                                            <div style="font-weight:900; color:var(--cb-primary); font-size:1rem; margin-bottom:0.5rem">${i.name}</div>
+                                            <div style="font-size:0.85rem; opacity:0.8; line-height:1.4">${i.desc}</div>
+                                            ${i.ex && html`<div style="font-size:0.75rem; opacity:0.5; font-style:italic; margin-top:0.75rem">"${i.ex}"</div>`}
+                                        </div>
+                                    `)}
+                                </div>
+                            </div>
+                        `) : html`<p style="text-align:center; padding:3rem; opacity:0.5">No matching biases found.</p>`}
+                    </div>
+                </div>
+            </div>
+        `;
+    };
 
     const HighlightedText = ({ text, biases, strengths }) => {
         const segments = useMemo(() => {
@@ -285,10 +410,7 @@
             const unique = [];
             let currentEnd = -1;
             matches.forEach(m => {
-                if (m.start >= currentEnd) {
-                    unique.push(m);
-                    currentEnd = m.end;
-                }
+                if (m.start >= currentEnd) { unique.push(m); currentEnd = m.end; }
             });
 
             const res = [];
@@ -323,15 +445,28 @@
     };
 
     const App = () => {
-        const [inputText, setInputText] = useState("I know everything will fail because I'm always unlucky. This statement is objective.");
+        // Robust Translation Fallback System
+        const t = {
+            title: '{{ i18n "cognitive_detector.title" }}'.trim() || 'Cognitive Bias Detector',
+            subtitle: '{{ i18n "cognitive_detector.subtitle" }}'.trim() || 'Identify underlying subconscious patterns and logic strengths.',
+            placeholder: '{{ i18n "cognitive_detector.placeholder" }}'.trim() || 'Paste your text here to begin analysis...',
+            analyze_btn: '{{ i18n "cognitive_detector.analyze_btn" }}'.trim() || 'Analyze Text',
+            analyzing: '{{ i18n "cognitive_detector.analyzing" }}'.trim() || 'Analyzing...',
+            results_title: '{{ i18n "cognitive_detector.results_title" }}'.trim() || 'Analysis Results',
+            dictionary_title: '{{ i18n "cognitive_detector.dictionary_title" }}'.trim() || 'Bias Dictionary',
+            error_generic: '{{ i18n "cognitive_detector.error_generic" }}'.trim() || 'We encountered a technical issue during analysis.'
+        };
+
+        const [inputText, setInputText] = useState("Confirmation bias is a powerful phenomenon. I think this tool is great because it agrees with me!");
         const [analysisResult, setAnalysisResult] = useState(null);
         const [lastAnalyzedText, setLastAnalyzedText] = useState("");
         const [isLoading, setIsLoading] = useState(false);
         const [isThinkingMode, setIsThinkingMode] = useState(false);
+        const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
         const [backendError, setBackendError] = useState(null);
 
         const handleAnalyze = async () => {
-            if (!inputText.trim()) return;
+            if (!inputText?.trim()) return;
             setIsLoading(true); setAnalysisResult(null); setBackendError(null);
             setLastAnalyzedText(inputText);
 
@@ -350,57 +485,60 @@
                 if (!response.ok) throw new Error(JSON.stringify(data));
                 setAnalysisResult(data);
             } catch (err) {
-                console.error(err);
+                console.error("ANALYSIS FAILED:", err);
                 try { setBackendError(JSON.parse(err.message)); }
-                catch { setBackendError({ error: err.message }); }
+                catch { setBackendError({ error: "System Error", details: err.message }); }
             } finally { setIsLoading(false); }
         };
 
         return html`
             <div class="cb-root">
                 <header class="cb-header">
-                    <h1 class="cb-title">{{ i18n "cognitive_detector.title" }}</h1>
-                    <p class="cb-subtitle">{{ i18n "cognitive_detector.subtitle" }}</p>
+                    <h1 class="cb-title">${t.title}</h1>
+                    <p class="cb-subtitle">${t.subtitle}</p>
                 </header>
 
                 <div class="cb-panel">
                     <textarea 
-                        class="cb-textarea"
+                        class="cb-textarea custom-scrollbar"
                         value=${inputText}
                         onInput=${(e) => setInputText(e.target.value)}
-                        placeholder='{{ i18n "cognitive_detector.placeholder" }}'
+                        placeholder=${t.placeholder}
                         disabled=${isLoading}
                     ></textarea>
 
                     <div class="cb-controls">
-                        <div class="cb-toggle-wrapper">
-                            <label class="cb-toggle-label" onClick=${() => setIsThinkingMode(!isThinkingMode)}>
-                                ${isThinkingMode ? "Deep Analysis (Gemini 2.5 Pro)" : "Fast Analysis (Gemini 2.5 Flash)"}
-                            </label>
-                            <button class="cb-toggle-btn" data-active=${isThinkingMode} onClick=${() => setIsThinkingMode(!isThinkingMode)}>
-                                <span class="cb-toggle-knob"></span>
+                        <div class="cb-actions-left">
+                            <div class="cb-toggle-wrapper">
+                                <label class="cb-toggle-label" onClick=${() => setIsThinkingMode(!isThinkingMode)}>
+                                    ${isThinkingMode ? "Deep Analysis" : "Fast Analysis"}
+                                </label>
+                                <button class="cb-toggle-btn" data-active=${isThinkingMode} onClick=${() => setIsThinkingMode(!isThinkingMode)}>
+                                    <span class="cb-toggle-knob"></span>
+                                </button>
+                            </div>
+                            <button onClick=${() => setIsGlossaryOpen(true)} style="background:none; border:none; color:var(--cb-primary); font-weight:900; cursor:pointer; font-size:0.9rem; text-decoration:underline">
+                                📚 ${t.dictionary_title}
                             </button>
                         </div>
 
                         <button class="cb-analyze-btn" disabled=${isLoading} onClick=${handleAnalyze}>
-                            ${isLoading ? html`<span class="cb-spinner inline-block mr-2 text-xl">⟳</span> ${'{{ i18n "cognitive_detector.analyzing" }}'}` : html`${'{{ i18n "cognitive_detector.analyze_btn" }}'}`}
+                            ${isLoading ? html`<span class="cb-spinner inline-block mr-2 text-xl">⟳</span> ${t.analyzing}` : html`🚀 ${t.analyze_btn}`}
                         </button>
                     </div>
                 </div>
 
                 ${(isLoading || analysisResult || backendError) && html`
-                    <div class="cb-animate-fade">
+                    <div id="results-area" class="cb-animate-fade">
                         ${isLoading ? html`
-                            <div style="text-align:center; padding:3rem; opacity:0.6">
-                                <div class="cb-spinner" style="width:3rem; height:3rem; border:4px solid rgba(var(--color-primary-500), 0.2); border-top-color:var(--cb-primary); border-radius:50%; margin:0 auto 1.5rem auto"></div>
-                                <p style="font-weight:900; letter-spacing:0.1em; text-transform:uppercase">${'{{ i18n "cognitive_detector.analyzing" }}'}</p>
+                            <div style="text-align:center; padding:4rem; opacity:0.6">
+                                <div class="cb-spinner" style="width:3.5rem; height:3.5rem; border:4px solid rgba(var(--color-primary-500), 0.1); border-top-color:var(--cb-primary); border-radius:50%; margin:0 auto 2rem auto"></div>
+                                <p style="font-weight:900; letter-spacing:0.2em; text-transform:uppercase">${t.analyzing}</p>
                             </div>
                         ` : analysisResult ? html`
-                            <div class="cb-panel" style="padding:3rem">
-                                <h3 style="font-size:2rem; font-weight:900; margin-bottom:2rem; font-style:italic">
-                                    🔍 ${'{{ i18n "cognitive_detector.results_title" }}'}
-                                </h3>
-
+                            <div class="cb-panel" style="padding:3.5rem">
+                                <h3 style="font-size:2.25rem; font-weight:900; margin-bottom:2.5rem; font-style:italic">✨ ${t.results_title}</h3>
+                                
                                 <${HighlightedText} 
                                     text=${lastAnalyzedText} 
                                     biases=${analysisResult.biases} 
@@ -411,35 +549,40 @@
                                     const textLower = (lastAnalyzedText || "").toLowerCase();
                                     const unmatchedBiases = (analysisResult.biases || []).filter(b => b.phrase && !textLower.includes(b.phrase.toLowerCase()));
                                     const unmatchedStrengths = (analysisResult.strengths || []).filter(s => s.phrase && !textLower.includes(s.phrase.toLowerCase()));
-                                    
                                     if (unmatchedBiases.length === 0 && unmatchedStrengths.length === 0) return null;
                                     return html`
-                                        <div class="cb-insights-fallback">
-                                            <h4 style="font-size:0.7rem; font-weight:900; text-transform:uppercase; color:gray; letter-spacing:0.1em; margin-bottom:1rem">Additional Contextual Insights</h4>
-                                            ${unmatchedBiases.map(b => html`
-                                                <div class="cb-insight-item" style="color:#ef4444">
-                                                    <strong>[${b.biasName}]</strong> ${b.explanation}
-                                                </div>
-                                            `)}
-                                            ${unmatchedStrengths.map(s => html`
-                                                <div class="cb-insight-item" style="color:var(--cb-primary)">
-                                                    <strong>[Strength]</strong> ${s.endorsement}
-                                                </div>
-                                            `)}
+                                        <div style="margin-top:2.5rem; border-top:1px solid rgba(150,150,150,0.1); padding-top:2rem">
+                                            <h4 style="font-size:0.75rem; font-weight:900; text-transform:uppercase; color:gray; letter-spacing:0.15em; margin-bottom:1.5rem">Contextual Insights</h4>
+                                            <div style="display:grid; grid-template-columns:1fr; gap:1.5rem">
+                                                ${unmatchedBiases.map(b => html`
+                                                    <div key=${b.biasName} style="padding:1rem 1.5rem; background:rgba(239, 68, 68, 0.05); border-radius:14px; border-left:4px solid #ef4444">
+                                                        <strong style="color:#ef4444; font-size:0.8rem; text-transform:uppercase; display:block; margin-bottom:0.25rem">${b.biasName}</strong>
+                                                        <span style="font-size:0.95rem; opacity:0.8">${b.explanation}</span>
+                                                    </div>
+                                                `)}
+                                                ${unmatchedStrengths.map(s => html`
+                                                    <div key=${s.endorsement} style="padding:1rem 1.5rem; background:rgba(34, 197, 94, 0.05); border-radius:14px; border-left:4px solid #22c55e">
+                                                        <strong style="color:#22c55e; font-size:0.8rem; text-transform:uppercase; display:block; margin-bottom:0.25rem">Strength</strong>
+                                                        <span style="font-size:0.95rem; opacity:0.8">${s.endorsement}</span>
+                                                    </div>
+                                                `)}
+                                            </div>
                                         </div>
                                     `;
                                 })()}
                             </div>
                         ` : backendError ? html`
-                            <div class="cb-panel" style="border-color:#ef4444; background:rgba(239, 68, 68, 0.05); text-align:center">
-                                <h3 style="color:#ef4444; font-weight:900; font-size:1.5rem; margin-bottom:1rem">⚠️ Analysis Error</h3>
-                                <pre style="font-size:0.75rem; opacity:0.7; overflow:auto; max-height:10rem; margin-bottom:1.5rem">${JSON.stringify(backendError, null, 2)}</pre>
-                                <button onClick=${handleAnalyze} class="cb-analyze-btn" style="background:#ef4444; margin:0 auto">Retry</button>
+                            <div class="cb-panel" style="border: 2px solid #ef4444; background: rgba(239, 68, 68, 0.04); text-align: center; padding: 3.5rem">
+                                <div style="font-size:4rem; margin-bottom:1.5rem">⚠️</div>
+                                <h3 style="color:#ef4444; font-weight:900; font-size:1.75rem; margin-bottom:1rem">${t.error_generic}</h3>
+                                <pre style="font-size:0.8rem; opacity:0.6; padding:1.5rem; background:rgba(0,0,0,0.2); border-radius:12px; margin-bottom:2rem; overflow:auto; max-height:12rem; text-align:left">${JSON.stringify(backendError, null, 2)}</pre>
+                                <button onClick=${handleAnalyze} class="cb-analyze-btn" style="background:#ef4444; margin: 0 auto; min-width:200px">Retry</button>
                             </div>
                         ` : ''}
                     </div>
                 `}
             </div>
+            <${Glossary} isOpen=${isGlossaryOpen} onClose=${() => setIsGlossaryOpen(false)} t=${t} />
         `;
     };
 
