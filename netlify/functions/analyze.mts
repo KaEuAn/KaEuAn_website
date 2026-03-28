@@ -72,11 +72,10 @@ export default async (req: Request, context: Context) => {
         const body = await req.json() as { text: string; language: string; isThinkingMode: boolean };
         const { text, language, isThinkingMode } = body;
 
-        const targetModel = isThinkingMode ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
-        // Try v1 first as it's the most stable
+        const targetModel = isThinkingMode ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
         const apiUrl = `https://generativelanguage.googleapis.com/v1/models/${targetModel}:generateContent?key=${apiKey}`;
 
-        console.log(`DEBUG: Fetching ${targetModel} via v1...`);
+        console.log(`DEBUG: Analysis starting with ${targetModel}...`);
 
         const response = await fetch(apiUrl, {
             method: "POST",
@@ -93,13 +92,8 @@ export default async (req: Request, context: Context) => {
         const data = await response.json() as any;
 
         if (!response.ok) {
-            // If failed, let's find out what models ARE available
-            const listRes = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
-            const listData = await listRes.json() as any;
-            const availableNames = listData.models?.map((m: any) => m.name.replace('models/', '')) || [];
-            
-            console.error("DEBUG: Request Failed. Available models:", availableNames);
-            throw new Error(`Model ${targetModel} not found. Available on your key: ${availableNames.join(', ') || 'NONE'}`);
+            console.error("DEBUG: API Error:", JSON.stringify(data, null, 2));
+            throw new Error(data.error?.message || `HTTP ${response.status}`);
         }
 
         const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(data);
@@ -110,7 +104,7 @@ export default async (req: Request, context: Context) => {
             message: error?.message,
             name: error?.name
         };
-        console.error("DEBUG: Final Crash Details:", JSON.stringify(diagnostics, null, 2));
+        console.error("DEBUG: Fatal Error:", JSON.stringify(diagnostics, null, 2));
         
         return new Response(JSON.stringify({ 
             error: diagnostics.message || "Execution Failed",
