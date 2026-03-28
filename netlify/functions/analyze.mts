@@ -54,13 +54,18 @@ export default async (req: Request, context: Context) => {
     }
 
     const apiKey = process.env.SERVER_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-    console.log("Function invoked. Checking for API Key...");
+    console.log("Function invoked. Environment check...");
+    
     if (!apiKey) {
-        console.error("CRITICAL ERROR: (SERVER_)GEMINI_API_KEY is not set in environment variables!");
+        console.error("DEBUG: (SERVER_)GEMINI_API_KEY is undefined or empty.");
         return new Response(JSON.stringify({ error: "Server misconfiguration: API KEY MISSING" }), { status: 500 });
-    } else {
-        console.log("API Key found (length: " + apiKey.length + "). Proceeding with analysis.");
     }
+
+    // Safe logging: reveal only start and end to verify the correct key is being used
+    const maskedKey = apiKey.length > 8 
+        ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`
+        : "***";
+    console.log(`DEBUG: API Key detected (Length: ${apiKey.length}, Masked: ${maskedKey})`);
 
     try {
         const body = await req.json() as { text: string; language: string; isThinkingMode: boolean };

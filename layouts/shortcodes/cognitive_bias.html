@@ -339,10 +339,28 @@
 .dark .cb-glossary-item { background: #1f2937; border-color: #374151; }
 
 .cb-error {
-  background: #fef2f2; color: #991b1b; padding: 1.5rem; border-radius: 16px; margin-top: 1.5rem;
-  border: 1px solid #fecaca; display: flex; align-items: center; gap: 1rem; font-weight: 500;
+  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+  color: #b91c1c;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: cbShake 0.4s ease-in-out;
 }
-.dark .cb-error { background: rgba(153, 27, 27, 0.2); border-color: #991b1b; color: #fca5a5; }
+.dark .cb-error {
+  background: rgba(153, 27, 27, 0.2);
+  border-color: rgba(153, 27, 27, 0.3);
+  color: #f87171;
+}
+@keyframes cbShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
 
 /* Utilities / Responsive fixes */
 @keyframes cbFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -550,8 +568,18 @@ const App = () => {
 
                 ${errorKey && html`
                     <div class="cb-error">
-                        ⚠ ${t[errorKey]}
-                        ${backendError && backendError !== 'HTTP error 500' && html`<br/><small style="opacity:0.8; margin-top:0.5rem; display:block">Server Details: ${backendError}</small>`}
+                        <div style="display:flex; align-items:center; gap:0.5rem">
+                            <span style="font-size:1.25rem">⚠</span> 
+                            <span>${t[errorKey]}</span>
+                        </div>
+                        ${backendError && html`
+                            <div style="margin-top:0.5rem; padding-top:0.75rem; border-top:1px solid rgba(185,28,28,0.1); font-family:monospace; font-size:0.875rem; opacity:0.9">
+                                <div style="font-weight:700; margin-bottom:0.25rem; font-size:0.75rem; text-transform:uppercase; opacity:0.6">Debug Information:</div>
+                                <div style="word-break:break-all; line-height:1.4">
+                                    ${backendError.includes('401') ? 'API Authentication Failed (401 Unauthorized)' : backendError}
+                                </div>
+                            </div>
+                        `}
                     </div>
                 `}
 
