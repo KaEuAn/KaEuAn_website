@@ -40,21 +40,21 @@
         bottom: 125%;
         left: 50%;
         transform: translateX(-50%) translateY(10px);
-        width: 250px;
-        padding: 1rem;
-        background: rgba(var(--color-neutral-800, 31, 41, 55), 0.95);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        width: 280px;
+        padding: 1.25rem;
+        background: rgba(31, 41, 55, 0.98);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         color: white;
-        border-radius: 12px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-        z-index: 100;
+        border-radius: 16px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        z-index: 1500;
         transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         font-weight: normal;
         pointer-events: none;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        line-height: 1.4;
+        line-height: 1.5;
     }
 
     .highlight-fragment:hover .tooltip-content {
@@ -77,19 +77,16 @@
 
     @media (max-width: 640px) {
         .tooltip-content {
-            width: 220px;
-            left: 0;
-            transform: translateY(10px);
-        }
-        .highlight-fragment:hover .tooltip-content {
-            transform: translateY(0);
+            width: 80vw;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
         }
     }
 
     /* Dictionary Styles */
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(var(--color-primary-500), 0.2); border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(var(--color-primary-500, 59, 130, 246), 0.2); border-radius: 10px; }
 </style>
 
 <script type="module">
@@ -111,14 +108,14 @@
         ],
         LogicErrors: [
             { name: "Correlation vs Causation", desc: "Assuming that because two things happen together, one caused the other." },
-            { name: "Strawman Fallacy", desc: "Misrepresenting someone's argument to make it easier to attack." }
+            { name: "Strawman Fallacy", desc: "Misrepresenting someone's argument." }
         ]
     };
 
     const HighlightedText = ({ text, biases, strengths }) => {
         const segments = useMemo(() => {
             if (!text) return [];
-            const normText = text.replace(/\r\n/g, '\n');
+            const normText = (text || "").replace(/\r\n/g, '\n');
             const items = [
                 ...(biases || []).map(b => ({ ...b, type: 'bias', phrase: (b.phrase || "").replace(/\r\n/g, '\n') })),
                 ...(strengths || []).map(s => ({ ...s, type: 'strength', phrase: (s.phrase || "").replace(/\r\n/g, '\n') }))
@@ -165,7 +162,7 @@
                     const isBias = seg.type === 'bias';
                     const detail = seg.detail;
                     return html`
-                        <span class="highlight-fragment ${isBias ? 'highlight-red' : 'highlight-green'}">
+                        <span class="highlight-fragment ${isBias ? 'highlight-red' : 'highlight-green'}" onClick=${(e) => e.stopPropagation()}>
                             ${seg.content}
                             <span class="tooltip-content ${isBias ? 'tooltip-red' : 'tooltip-green'}">
                                 <span class="tooltip-header">${isBias ? (detail.biasName || 'Bias') : 'Strength'}</span>
@@ -179,7 +176,19 @@
     };
 
     const App = () => {
-        const [inputText, setInputText] = useState("I am always right because I never make mistakes. This is a very objective statement.");
+        // Safe I18n fallbacks
+        const t = {
+            title: '{{ i18n "cognitive_detector.title" }}' || 'Cognitive Bias Detector',
+            subtitle: '{{ i18n "cognitive_detector.subtitle" }}' || 'Identify hidden biases and strengths in your writing.',
+            placeholder: '{{ i18n "cognitive_detector.placeholder" }}' || 'Enter text to analyze...',
+            analyze_btn: '{{ i18n "cognitive_detector.analyze_btn" }}' || 'Analyze Text',
+            analyzing: '{{ i18n "cognitive_detector.analyzing" }}' || 'Analyzing...',
+            results_title: '{{ i18n "cognitive_detector.results_title" }}' || 'Analysis Results',
+            dictionary_title: '{{ i18n "cognitive_detector.dictionary_title" }}' || 'Bias Dictionary',
+            error_generic: '{{ i18n "cognitive_detector.error_generic" }}' || 'An error occurred during analysis.'
+        };
+
+        const [inputText, setInputText] = useState("I know everything will fail because I'm always unlucky. But I'll try anyway.");
         const [analysisResult, setAnalysisResult] = useState(null);
         const [lastAnalyzedText, setLastAnalyzedText] = useState("");
         const [isLoading, setIsLoading] = useState(false);
@@ -188,7 +197,7 @@
         const [backendError, setBackendError] = useState(null);
 
         const handleAnalyze = async () => {
-            if (!inputText.trim()) return;
+            if (!inputText?.trim()) return;
             setIsLoading(true);
             setAnalysisResult(null);
             setBackendError(null);
@@ -198,21 +207,24 @@
                 const response = await fetch('/.netlify/functions/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: inputText, language: 'en', isThinkingMode })
+                    body: JSON.stringify({ 
+                        text: inputText, 
+                        language: document.documentElement.lang || 'en', 
+                        isThinkingMode 
+                    })
                 });
 
+                const data = await response.json();
                 if (!response.ok) {
-                    const err = await response.json().catch(() => ({ error: "Server Error" }));
-                    throw new Error(JSON.stringify(err));
+                    throw new Error(JSON.stringify(data));
                 }
-
-                setAnalysisResult(await response.json());
+                setAnalysisResult(data);
             } catch (err) {
-                console.error(err);
+                console.error("DEBUG:", err);
                 try {
                     setBackendError(JSON.parse(err.message));
                 } catch {
-                    setBackendError({ error: err.message });
+                    setBackendError({ error: "Communication Failure", details: err.message });
                 }
             } finally {
                 setIsLoading(false);
@@ -221,77 +233,88 @@
 
         return html`
             <div class="space-y-8 max-w-5xl mx-auto px-4 py-12">
+                <!-- Header -->
                 <div class="text-center space-y-4">
                     <h2 class="text-4xl md:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
-                        {{ i18n "cognitive_detector.title" }}
+                        ${t.title}
                     </h2>
-                    <p class="text-neutral-500 italic">{{ i18n "cognitive_detector.subtitle" }}</p>
+                    <p class="text-neutral-500 italic text-lg">${t.subtitle}</p>
                 </div>
 
-                <div class="space-y-4">
+                <!-- Input Section -->
+                <div class="space-y-6">
                     <div class="relative group">
                         <textarea 
-                            class="w-full h-80 p-8 rounded-3xl border-2 border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:border-primary-500 transition-all outline-none resize-none shadow-xl text-lg"
+                            class="w-full h-80 p-8 rounded-3xl border-2 border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:border-primary-500 transition-all outline-none resize-none shadow-xl text-lg custom-scrollbar"
                             value=${inputText}
                             onInput=${(e) => setInputText(e.target.value)}
-                            placeholder="Enter text to analyze..."
+                            placeholder=${t.placeholder}
+                            disabled=${isLoading}
                         ></textarea>
-                        
-                        <div class="absolute bottom-6 right-6 flex items-center space-x-4">
+                    </div>
+
+                    <!-- Layout Fix: Buttons moved outside textarea -->
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center space-x-4">
                             <button 
                                 onClick=${() => setIsThinkingMode(!isThinkingMode)}
-                                class="px-4 py-2 rounded-full border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-sm font-bold flex items-center space-x-2"
+                                class="px-5 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-sm font-bold flex items-center space-x-3"
                             >
-                                <span class="h-2 w-2 rounded-full ${isThinkingMode ? 'bg-secondary-500 animate-pulse' : 'bg-primary-500'}"></span>
-                                <span>${isThinkingMode ? "Deep Analysis" : "Fast Analysis"}</span>
+                                <span class="h-2.5 w-2.5 rounded-full ${isThinkingMode ? 'bg-secondary-500 animate-pulse' : 'bg-primary-500'}"></span>
+                                <span>${isThinkingMode ? "Deep Analysis (Gemini 2.5 Pro)" : "Fast Analysis (Gemini 2.5 Flash)"}</span>
                             </button>
-                            
-                            <button 
-                                onClick=${handleAnalyze}
-                                disabled=${isLoading}
-                                class="px-8 py-3 rounded-2xl bg-primary-500 text-white font-black shadow-lg hover:shadow-primary-500/20 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
-                            >
-                                ${isLoading ? html`<span class="animate-spin inline-block mr-2">⟳</span>` : ''}
-                                {{ i18n "cognitive_detector.analyze_btn" }}
+
+                            <button onClick=${() => setIsGlossaryOpen(!isGlossaryOpen)} class="text-neutral-500 hover:text-primary-500 transition-colors font-bold text-sm">
+                                📚 ${t.dictionary_title}
                             </button>
                         </div>
+
+                        <button 
+                            onClick=${handleAnalyze}
+                            disabled=${isLoading}
+                            class="w-full md:w-auto px-10 py-4 rounded-2xl bg-primary-500 text-white font-black shadow-lg hover:shadow-primary-500/30 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center space-x-3"
+                        >
+                            ${isLoading ? html`<span class="animate-spin inline-block mr-2 text-xl">⟳</span>` : ''}
+                            <span class="text-lg uppercase tracking-wider">${isLoading ? t.analyzing : t.analyze_btn}</span>
+                        </button>
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-                    <button onClick=${() => setIsGlossaryOpen(!isGlossaryOpen)} class="w-full p-4 flex justify-between items-center font-bold">
-                        <span>📚 {{ i18n "cognitive_detector.dictionary_title" }}</span>
-                        <span class="transform transition-transform ${isGlossaryOpen ? 'rotate-180' : ''}">▼</span>
-                    </button>
-                    ${isGlossaryOpen && html`
-                        <div class="p-6 h-64 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-neutral-100 dark:border-neutral-800">
+                <!-- Glossary Dropdown -->
+                ${isGlossaryOpen && html`
+                    <div class="rounded-3xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 p-8 animate-fade-in">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 custom-scrollbar max-h-96 overflow-y-auto pr-4">
                             ${Object.entries(logicDictionary).map(([cat, items]) => html`
-                                <div>
-                                    <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400 mb-3">${cat}</h4>
-                                    ${items.map(i => html`
-                                        <div class="mb-3">
-                                            <div class="text-primary-500 font-bold text-sm">${i.name}</div>
-                                            <div class="text-xs opacity-60">${i.desc}</div>
-                                        </div>
-                                    `)}
+                                <div key=${cat}>
+                                    <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 border-b border-neutral-200 dark:border-neutral-700 pb-2">${cat}</h4>
+                                    <div class="space-y-4">
+                                        ${items.map(i => html`
+                                            <div key=${i.name} class="group">
+                                                <div class="text-primary-500 font-bold text-sm mb-1 group-hover:translate-x-1 transition-transform">${i.name}</div>
+                                                <div class="text-xs opacity-60 line-height-relaxed">${i.desc}</div>
+                                            </div>
+                                        `)}
+                                    </div>
                                 </div>
                             `)}
                         </div>
-                    `}
-                </div>
+                    </div>
+                `}
 
+                <!-- Results or Error -->
                 ${(isLoading || analysisResult || backendError) && html`
                     <div id="results-area" class="animate-fade-in py-12 border-t-2 border-dashed border-neutral-100 dark:border-neutral-800">
                         ${isLoading ? html`
-                            <div class="text-center py-20 space-y-4">
-                                <div class="w-16 h-16 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mx-auto"></div>
-                                <p class="text-xl font-bold animate-pulse">{{ i18n "cognitive_detector.analyzing" }}</p>
+                            <div class="text-center py-24 space-y-6">
+                                <div class="w-20 h-20 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mx-auto"></div>
+                                <p class="text-2xl font-black animate-pulse opacity-80">${t.analyzing}</p>
+                                <p class="text-neutral-500 italic">${isThinkingMode ? "Accessing deep reasoning models..." : "Synthesizing fast insights..."}</p>
                             </div>
                         ` : analysisResult ? html`
-                            <div class="bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-2xl p-8 md:p-12 space-y-8">
-                                <div class="flex items-center space-x-3">
-                                    <span class="text-2xl">🔍</span>
-                                    <h3 class="text-2xl font-black italic">{{ i18n "cognitive_detector.results_title" }}</h3>
+                            <div class="bg-white dark:bg-neutral-900 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-800 shadow-2xl p-8 md:p-14 space-y-10">
+                                <div class="flex items-center space-x-4">
+                                    <div class="bg-primary-500/10 p-4 rounded-3xl text-3xl">✨</div>
+                                    <h3 class="text-3xl font-black italic tracking-tight">${t.results_title}</h3>
                                 </div>
 
                                 <${HighlightedText} 
@@ -300,25 +323,26 @@
                                     strengths=${analysisResult.strengths} 
                                 />
 
+                                <!-- Fallback for items that couldn't be matched -->
                                 ${(() => {
                                     const textLower = (lastAnalyzedText || "").toLowerCase();
                                     const unmatchedBiases = (analysisResult.biases || []).filter(b => b.phrase && !textLower.includes(b.phrase.toLowerCase()));
                                     const unmatchedStrengths = (analysisResult.strengths || []).filter(s => s.phrase && !textLower.includes(s.phrase.toLowerCase()));
                                     if (unmatchedBiases.length === 0 && unmatchedStrengths.length === 0) return null;
                                     return html`
-                                        <div class="mt-8 pt-8 border-t border-neutral-100 dark:border-neutral-800 space-y-4">
-                                            <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400">Contextual Insights</h4>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="mt-8 pt-10 border-t border-neutral-100 dark:border-neutral-800 space-y-6">
+                                            <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400 opacity-60">Abstract Cognitive Insights</h4>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                                 ${unmatchedBiases.map(b => html`
-                                                    <div class="p-4 bg-red-500/5 rounded-2xl border border-red-500/10 text-sm">
-                                                        <strong class="text-red-500 uppercase text-xs block mb-1">${b.biasName}</strong>
-                                                        ${b.explanation}
+                                                    <div class="p-6 bg-red-500/5 rounded-3xl border border-red-500/10 text-sm">
+                                                        <strong class="text-red-500 uppercase text-xs block mb-2 font-black">${b.biasName}</strong>
+                                                        <span class="opacity-80">${b.explanation}</span>
                                                     </div>
                                                 `)}
                                                 ${unmatchedStrengths.map(s => html`
-                                                    <div class="p-4 bg-primary-500/5 rounded-2xl border border-primary-500/10 text-sm">
-                                                        <strong class="text-primary-500 uppercase text-xs block mb-1">Strength</strong>
-                                                        ${s.endorsement}
+                                                    <div class="p-6 bg-primary-500/5 rounded-3xl border border-primary-500/10 text-sm">
+                                                        <strong class="text-primary-500 uppercase text-xs block mb-2 font-black">Strength</strong>
+                                                        <span class="opacity-80">${s.endorsement}</span>
                                                     </div>
                                                 `)}
                                             </div>
@@ -327,11 +351,14 @@
                                 })()}
                             </div>
                         ` : backendError ? html`
-                            <div class="bg-red-50 dark:bg-red-900/10 border-2 border-red-500/20 rounded-3xl p-12 text-center space-y-6">
-                                <div class="text-5xl">⚠️</div>
-                                <h3 class="text-2xl font-bold text-red-600">{{ i18n "cognitive_detector.error_generic" }}</h3>
-                                <pre class="p-4 bg-white dark:bg-black/20 rounded-xl text-left text-xs font-mono overflow-auto max-h-40">${JSON.stringify(backendError, null, 2)}</pre>
-                                <button onClick=${handleAnalyze} class="px-12 py-4 bg-red-500 text-white rounded-2xl font-black shadow-lg">Retry Analysis</button>
+                            <div class="bg-red-50 dark:bg-red-900/10 border-2 border-red-500/20 rounded-[2.5rem] p-12 text-center space-y-8 animate-shake">
+                                <div class="text-6xl">⚠️</div>
+                                <h3 class="text-2xl font-black text-red-600">${t.error_generic}</h3>
+                                <div class="p-6 bg-white dark:bg-black/20 rounded-2xl text-left border border-red-500/10 shadow-inner">
+                                    <p class="text-xs font-black uppercase text-red-400 mb-3 tracking-widest">Diagnostic Logs:</p>
+                                    <pre class="text-xs font-mono text-neutral-600 dark:text-neutral-400 overflow-x-auto whitespace-pre-wrap">${backendError.error}: ${backendError.details || JSON.stringify(backendError.diagnostics || backendError, null, 2)}</pre>
+                                </div>
+                                <button onClick=${handleAnalyze} class="px-14 py-4 bg-red-500 text-white rounded-2xl font-black shadow-lg hover:shadow-red-500/30 hover:scale-105 transition-all">Retry Analysis</button>
                             </div>
                         ` : ''}
                     </div>
