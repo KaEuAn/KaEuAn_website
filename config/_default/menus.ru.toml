@@ -1,16 +1,17 @@
 [[main]]
   name = "Новости"
-  pageRef = "posts"
+  url = "/ru/posts/"
   weight = 10
 
 [[main]]
-  name = "Контакты"
-  pageRef = "contacts"
-  weight = 20
-[[main]]
-  name = "Когнитивные искажения"
-  pageRef = "cognitive-bias"
+  name = "Когнитивные Искажения"
+  url = "/ru/cognitive-bias/"
   weight = 15
+
+[[main]]
+  name = "Контакты"
+  url = "/ru/contacts/"
+  weight = 20
 
 
 # -- Footer Menu --

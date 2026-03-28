@@ -1,6 +1,6 @@
 [[main]]
   name = "News"
-  pageRef = "posts"
+  url = "/posts/"
   weight = 10
 
 [[main]]
@@ -10,7 +10,7 @@
 
 [[main]]
   name = "Contacts"
-  pageRef = "contacts"
+  url = "/contacts/"
   weight = 20
 
 

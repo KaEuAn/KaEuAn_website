@@ -1,16 +1,17 @@
 [[main]]
   name = "Новости"
-  pageRef = "posts"
+  url = "/pl/posts/"
   weight = 10
 
 [[main]]
-  name = "Контакты"
-  pageRef = "contacts"
-  weight = 20
-[[main]]
-  name = "Błędy poznawcze"
-  pageRef = "cognitive-bias"
+  name = "Błąd Poznawczy"
+  url = "/pl/cognitive-bias/"
   weight = 15
+
+[[main]]
+  name = "Kontakt"
+  url = "/pl/contacts/"
+  weight = 20
 
 
 # -- Footer Menu --
