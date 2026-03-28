@@ -57,13 +57,13 @@ export default async (req: Request, context: Context) => {
     const apiKey = rawKey?.trim();
 
     console.log("Function invoked. Environment check...");
-    
+
     if (!apiKey) {
         console.error("DEBUG: (SERVER_)GEMINI_API_KEY is undefined or empty.");
         return new Response(JSON.stringify({ error: "Server misconfiguration: API KEY MISSING" }), { status: 500 });
     }
 
-    const maskedKey = apiKey.length > 8 
+    const maskedKey = apiKey.length > 8
         ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`
         : "***";
     console.log(`DEBUG: API Key detected (Length: ${apiKey.length}, Masked: ${maskedKey})`);
@@ -72,38 +72,43 @@ export default async (req: Request, context: Context) => {
         const body = await req.json() as { text: string; language: string; isThinkingMode: boolean };
         const { text, language, isThinkingMode } = body;
 
-        const ai = new GoogleGenAI({ 
-            apiKey,
-            baseUrl: "https://generativelanguage.googleapis.com/v1beta" // Use v1beta for better compatibility with new models
+        const targetModel = isThinkingMode ? 'gemini-3.1-pro' : 'gemini-3-flash';
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${apiKey}`;
+
+        console.log(`DEBUG: Bypassing SDK. Fetching ${targetModel}...`);
+
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: `Analyze for cognitive biases and strengths. Result in JSON. Language: ${language || 'en'}. Text: ${text}` }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema
+                }
+            })
         });
 
-        const targetModel = isThinkingMode ? 'models/gemini-3.1-pro' : 'models/gemini-1.5-flash';
-        console.log(`DEBUG: Analysis attempt with ${targetModel}`);
+        const data = await response.json() as any;
 
-        const result = await ai.models.generateContent({
-            model: targetModel,
-            contents: text,
-            config: {
-                systemInstruction: `Analyze for cognitive biases and strengths. Result in JSON. Language: ${language || 'en'}.`,
-                responseMimeType: "application/json",
-                responseSchema: responseSchema,
-            },
-        });
+        if (!response.ok) {
+            console.error("DEBUG: Raw Fetch Failed:", JSON.stringify(data, null, 2));
+            throw new Error(data.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
 
-        return new Response(result.text, { headers: { "Content-Type": "application/json" } });
+        // The response format for raw fetch is slightly different: candidates[0].content.parts[0].text
+        const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(data);
+        return new Response(resultText, { headers: { "Content-Type": "application/json" } });
 
     } catch (error: any) {
-        // Force extraction of hidden error properties
         const diagnostics = {
             message: error?.message,
-            status: error?.status,
-            reason: error?.reason,
-            details: error?.details,
+            stack: error?.stack,
             name: error?.name
         };
-        console.error("DEBUG: Detailed Error Object:", JSON.stringify(diagnostics, null, 2));
-        
-        return new Response(JSON.stringify({ 
+        console.error("DEBUG: Fatal Error:", JSON.stringify(diagnostics, null, 2));
+
+        return new Response(JSON.stringify({
             error: diagnostics.message || "Request failed",
             details: diagnostics
         }), { status: 500 });
