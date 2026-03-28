@@ -1,92 +1,255 @@
 <div id="cognitive-bias-root" class="not-prose"></div>
 
 <style>
-    /* Modern Interactive Highlights */
-    .highlight-container {
-        line-height: 1.8;
-        font-size: 1.1rem;
-        white-space: pre-wrap;
-    }
+/* 1. RESTORED PREMIUM CSS FRAMEWORK (.cb-) */
+:root {
+  --cb-primary: rgba(var(--color-primary-500, 59, 130, 246), 1);
+  --cb-primary-hover: rgba(var(--color-primary-600, 37, 99, 235), 1);
+  --cb-secondary: rgba(var(--color-secondary-500, 168, 85, 247), 1);
+  --cb-bg-light: #ffffff;
+  --cb-bg-dark: #121212;
+  --cb-text-light: #1f2937;
+  --cb-text-dark: #f9fafb;
+}
 
-    .highlight-fragment {
-        position: relative;
-        cursor: help;
-        border-radius: 4px;
-        padding: 2px 0;
-        transition: all 0.2s ease;
-    }
+.cb-root {
+  font-family: inherit;
+  width: 100%;
+  max-width: 1024px;
+  margin: 3rem auto;
+  box-sizing: border-box;
+  color: var(--cb-text-light);
+}
+.dark .cb-root { color: var(--cb-text-dark); }
 
-    .highlight-red {
-        background-color: rgba(239, 68, 68, 0.1);
-        border-bottom: 2px solid rgba(239, 68, 68, 0.5);
-    }
-    .highlight-red:hover {
-        background-color: rgba(239, 68, 68, 0.2);
-    }
+.cb-header { text-align: center; margin-bottom: 3rem; }
+.cb-title {
+  display: inline-block;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  background: linear-gradient(135deg, var(--cb-primary), var(--cb-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.2em;
+}
+.cb-subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: #4b5563;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+.dark .cb-subtitle { color: #9ca3af; }
 
-    .highlight-green {
-        background-color: rgba(34, 197, 94, 0.1);
-        border-bottom: 2px solid rgba(34, 197, 94, 0.5);
-    }
-    .highlight-green:hover {
-        background-color: rgba(34, 197, 94, 0.2);
-    }
+/* The Glassmorphism Panel */
+.cb-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.8);
+  margin-bottom: 2rem;
+}
+.dark .cb-panel {
+  background: rgba(30,30,30, 0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
 
-    /* Glassmorphism Tooltips */
-    .tooltip-content {
-        visibility: hidden;
-        opacity: 0;
-        position: absolute;
-        bottom: 125%;
-        left: 50%;
-        transform: translateX(-50%) translateY(10px);
-        width: 280px;
-        padding: 1.25rem;
-        background: rgba(31, 41, 55, 0.98);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        color: white;
-        border-radius: 16px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        z-index: 1500;
-        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-        font-size: 0.9rem;
-        font-weight: normal;
-        pointer-events: none;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        line-height: 1.5;
-    }
+/* Textarea with High Contrast */
+.cb-textarea {
+  width: 100%;
+  min-height: 250px;
+  padding: 1.5rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  color: var(--cb-text-light);
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  resize: vertical;
+}
+.dark .cb-textarea {
+  background: rgba(15,15,15, 0.8);
+  border-color: #374151;
+  color: var(--cb-text-dark);
+}
+.cb-textarea:focus {
+  border-color: var(--cb-primary);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-500), 0.15);
+}
 
-    .highlight-fragment:hover .tooltip-content {
-        visibility: visible;
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
+/* Control Buttons & Toggles */
+.cb-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
 
-    .tooltip-header {
-        font-weight: 900;
-        margin-bottom: 0.5rem;
-        display: block;
-        text-transform: uppercase;
-        font-size: 0.7rem;
-        letter-spacing: 0.1em;
-    }
+.cb-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+.dark .cb-toggle-wrapper {
+  background: rgba(40,40,40, 0.8);
+  border-color: #374151;
+}
 
-    .tooltip-red .tooltip-header { color: #f87171; }
-    .tooltip-green .tooltip-header { color: #4ade80; }
+.cb-toggle-label {
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-right: 1rem;
+  cursor: pointer;
+  color: #4b5563;
+}
+.dark .cb-toggle-label { color: #d1d5db; }
 
-    @media (max-width: 640px) {
-        .tooltip-content {
-            width: 80vw;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-        }
-    }
+.cb-toggle-btn {
+  position: relative;
+  width: 3.5rem;
+  height: 2rem;
+  border-radius: 99px;
+  background: var(--cb-primary);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.cb-toggle-btn[data-active="false"] { background: #cbd5e1; }
+.dark .cb-toggle-btn[data-active="false"] { background: #475569; }
 
-    /* Dictionary Styles */
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(var(--color-primary-500, 59, 130, 246), 0.2); border-radius: 10px; }
+.cb-toggle-knob {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.cb-toggle-btn[data-active="true"] .cb-toggle-knob { transform: translateX(1.5rem); }
+
+.cb-analyze-btn {
+  background: var(--cb-text-light);
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 800;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.dark .cb-analyze-btn {
+  background: white;
+  color: var(--cb-text-light);
+}
+.cb-analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* 2. INTERACTIVE HIGHLIGHTING & TOOLTIPS */
+.cb-highlight-container {
+  line-height: 1.8;
+  font-size: 1.1rem;
+  white-space: pre-wrap;
+  color: var(--cb-text-light);
+}
+.dark .cb-highlight-container { color: var(--cb-text-dark); }
+
+.cb-highlight-fragment {
+  position: relative;
+  cursor: help;
+  border-radius: 4px;
+  padding: 2px 0;
+}
+
+.cb-highlight-red {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-bottom: 2px solid rgba(239, 68, 68, 0.6);
+}
+.cb-highlight-green {
+    background-color: rgba(34, 197, 94, 0.15);
+    border-bottom: 2px solid rgba(34, 197, 94, 0.6);
+}
+
+.cb-tooltip-content {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    width: 250px;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    font-size: 0.9rem;
+    pointer-events: none;
+    line-height: 1.4;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cb-highlight-fragment:hover .cb-tooltip-content {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.cb-tooltip-header {
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    display: block;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+}
+.cb-tooltip-red .cb-tooltip-header { color: #f87171; }
+.cb-tooltip-green .cb-tooltip-header { color: #4ade80; }
+
+/* Extra Insights Fallback */
+.cb-insights-fallback {
+  margin-top: 2rem;
+  border-top: 1px solid rgba(150,150,150,0.1);
+  padding-top: 1.5rem;
+}
+.cb-insight-item {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes cbFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.cb-animate-fade { animation: cbFadeIn 0.4s ease-out forwards; }
+@keyframes cbSpin { to { transform: rotate(360deg); } }
+.cb-spinner { animation: cbSpin 1s linear infinite; }
+
 </style>
 
 <script type="module">
@@ -95,22 +258,6 @@
     import htm from 'https://esm.sh/htm';
 
     const html = htm.bind(h);
-
-    const logicDictionary = {
-        DecisionMaking: [
-            { name: "Confirmation Bias", desc: "Favoring information that confirms existing beliefs." },
-            { name: "Anchoring Bias", desc: "Relying too heavily on the first piece of information encountered." },
-            { name: "Sunk Cost Fallacy", desc: "Continuing an endeavor due to previously invested resources." }
-        ],
-        SocialBiases: [
-            { name: "Halo Effect", desc: "Impression in one area influencing opinion in another." },
-            { name: "In-group Bias", desc: "Favoring members of one's own group." }
-        ],
-        LogicErrors: [
-            { name: "Correlation vs Causation", desc: "Assuming that because two things happen together, one caused the other." },
-            { name: "Strawman Fallacy", desc: "Misrepresenting someone's argument." }
-        ]
-    };
 
     const HighlightedText = ({ text, biases, strengths }) => {
         const segments = useMemo(() => {
@@ -153,19 +300,17 @@
             return res;
         }, [text, biases, strengths]);
 
-        if (!text) return null;
-
         return html`
-            <div class="highlight-container">
+            <div class="cb-highlight-container">
                 ${segments.map(seg => {
                     if (seg.type === 'text') return seg.content;
                     const isBias = seg.type === 'bias';
                     const detail = seg.detail;
                     return html`
-                        <span class="highlight-fragment ${isBias ? 'highlight-red' : 'highlight-green'}" onClick=${(e) => e.stopPropagation()}>
+                        <span class="cb-highlight-fragment ${isBias ? 'cb-highlight-red' : 'cb-highlight-green'}">
                             ${seg.content}
-                            <span class="tooltip-content ${isBias ? 'tooltip-red' : 'tooltip-green'}">
-                                <span class="tooltip-header">${isBias ? (detail.biasName || 'Bias') : 'Strength'}</span>
+                            <span class="cb-tooltip-content ${isBias ? 'cb-tooltip-red' : 'cb-tooltip-green'}">
+                                <span class="cb-tooltip-header">${isBias ? (detail.biasName || 'Bias') : 'Strength'}</span>
                                 ${isBias ? detail.explanation : detail.endorsement}
                             </span>
                         </span>
@@ -176,31 +321,16 @@
     };
 
     const App = () => {
-        // Safe I18n fallbacks
-        const t = {
-            title: '{{ i18n "cognitive_detector.title" }}' || 'Cognitive Bias Detector',
-            subtitle: '{{ i18n "cognitive_detector.subtitle" }}' || 'Identify hidden biases and strengths in your writing.',
-            placeholder: '{{ i18n "cognitive_detector.placeholder" }}' || 'Enter text to analyze...',
-            analyze_btn: '{{ i18n "cognitive_detector.analyze_btn" }}' || 'Analyze Text',
-            analyzing: '{{ i18n "cognitive_detector.analyzing" }}' || 'Analyzing...',
-            results_title: '{{ i18n "cognitive_detector.results_title" }}' || 'Analysis Results',
-            dictionary_title: '{{ i18n "cognitive_detector.dictionary_title" }}' || 'Bias Dictionary',
-            error_generic: '{{ i18n "cognitive_detector.error_generic" }}' || 'An error occurred during analysis.'
-        };
-
-        const [inputText, setInputText] = useState("I know everything will fail because I'm always unlucky. But I'll try anyway.");
+        const [inputText, setInputText] = useState("I know everything will fail because I'm always unlucky. This statement is objective.");
         const [analysisResult, setAnalysisResult] = useState(null);
         const [lastAnalyzedText, setLastAnalyzedText] = useState("");
         const [isLoading, setIsLoading] = useState(false);
         const [isThinkingMode, setIsThinkingMode] = useState(false);
-        const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
         const [backendError, setBackendError] = useState(null);
 
         const handleAnalyze = async () => {
-            if (!inputText?.trim()) return;
-            setIsLoading(true);
-            setAnalysisResult(null);
-            setBackendError(null);
+            if (!inputText.trim()) return;
+            setIsLoading(true); setAnalysisResult(null); setBackendError(null);
             setLastAnalyzedText(inputText);
 
             try {
@@ -215,107 +345,59 @@
                 });
 
                 const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(JSON.stringify(data));
-                }
+                if (!response.ok) throw new Error(JSON.stringify(data));
                 setAnalysisResult(data);
             } catch (err) {
-                console.error("DEBUG:", err);
-                try {
-                    setBackendError(JSON.parse(err.message));
-                } catch {
-                    setBackendError({ error: "Communication Failure", details: err.message });
-                }
-            } finally {
-                setIsLoading(false);
-            }
+                console.error(err);
+                try { setBackendError(JSON.parse(err.message)); }
+                catch { setBackendError({ error: err.message }); }
+            } finally { setIsLoading(false); }
         };
 
         return html`
-            <div class="space-y-8 max-w-5xl mx-auto px-4 py-12">
-                <!-- Header -->
-                <div class="text-center space-y-4">
-                    <h2 class="text-4xl md:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary-500 to-secondary-500">
-                        ${t.title}
-                    </h2>
-                    <p class="text-neutral-500 italic text-lg">${t.subtitle}</p>
-                </div>
+            <div class="cb-root">
+                <header class="cb-header">
+                    <h1 class="cb-title">{{ i18n "cognitive_detector.title" }}</h1>
+                    <p class="cb-subtitle">{{ i18n "cognitive_detector.subtitle" }}</p>
+                </header>
 
-                <!-- Input Section -->
-                <div class="space-y-6">
-                    <div class="relative group">
-                        <textarea 
-                            class="w-full h-80 p-8 rounded-3xl border-2 border-neutral-100 dark:border-neutral-800 bg-white dark:bg-neutral-900 focus:border-primary-500 transition-all outline-none resize-none shadow-xl text-lg custom-scrollbar"
-                            value=${inputText}
-                            onInput=${(e) => setInputText(e.target.value)}
-                            placeholder=${t.placeholder}
-                            disabled=${isLoading}
-                        ></textarea>
-                    </div>
+                <div class="cb-panel">
+                    <textarea 
+                        class="cb-textarea"
+                        value=${inputText}
+                        onInput=${(e) => setInputText(e.target.value)}
+                        placeholder='{{ i18n "cognitive_detector.placeholder" }}'
+                        disabled=${isLoading}
+                    ></textarea>
 
-                    <!-- Layout Fix: Buttons moved outside textarea -->
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center space-x-4">
-                            <button 
-                                onClick=${() => setIsThinkingMode(!isThinkingMode)}
-                                class="px-5 py-2.5 rounded-full border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-all text-sm font-bold flex items-center space-x-3"
-                            >
-                                <span class="h-2.5 w-2.5 rounded-full ${isThinkingMode ? 'bg-secondary-500 animate-pulse' : 'bg-primary-500'}"></span>
-                                <span>${isThinkingMode ? "Deep Analysis (Gemini 2.5 Pro)" : "Fast Analysis (Gemini 2.5 Flash)"}</span>
-                            </button>
-
-                            <button onClick=${() => setIsGlossaryOpen(!isGlossaryOpen)} class="text-neutral-500 hover:text-primary-500 transition-colors font-bold text-sm">
-                                📚 ${t.dictionary_title}
+                    <div class="cb-controls">
+                        <div class="cb-toggle-wrapper">
+                            <label class="cb-toggle-label" onClick=${() => setIsThinkingMode(!isThinkingMode)}>
+                                ${isThinkingMode ? "Deep Analysis (Gemini 2.5 Pro)" : "Fast Analysis (Gemini 2.5 Flash)"}
+                            </label>
+                            <button class="cb-toggle-btn" data-active=${isThinkingMode} onClick=${() => setIsThinkingMode(!isThinkingMode)}>
+                                <span class="cb-toggle-knob"></span>
                             </button>
                         </div>
 
-                        <button 
-                            onClick=${handleAnalyze}
-                            disabled=${isLoading}
-                            class="w-full md:w-auto px-10 py-4 rounded-2xl bg-primary-500 text-white font-black shadow-lg hover:shadow-primary-500/30 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center space-x-3"
-                        >
-                            ${isLoading ? html`<span class="animate-spin inline-block mr-2 text-xl">⟳</span>` : ''}
-                            <span class="text-lg uppercase tracking-wider">${isLoading ? t.analyzing : t.analyze_btn}</span>
+                        <button class="cb-analyze-btn" disabled=${isLoading} onClick=${handleAnalyze}>
+                            ${isLoading ? html`<span class="cb-spinner inline-block mr-2 text-xl">⟳</span> ${'{{ i18n "cognitive_detector.analyzing" }}'}` : html`${'{{ i18n "cognitive_detector.analyze_btn" }}'}`}
                         </button>
                     </div>
                 </div>
 
-                <!-- Glossary Dropdown -->
-                ${isGlossaryOpen && html`
-                    <div class="rounded-3xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 p-8 animate-fade-in">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 custom-scrollbar max-h-96 overflow-y-auto pr-4">
-                            ${Object.entries(logicDictionary).map(([cat, items]) => html`
-                                <div key=${cat}>
-                                    <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400 mb-4 border-b border-neutral-200 dark:border-neutral-700 pb-2">${cat}</h4>
-                                    <div class="space-y-4">
-                                        ${items.map(i => html`
-                                            <div key=${i.name} class="group">
-                                                <div class="text-primary-500 font-bold text-sm mb-1 group-hover:translate-x-1 transition-transform">${i.name}</div>
-                                                <div class="text-xs opacity-60 line-height-relaxed">${i.desc}</div>
-                                            </div>
-                                        `)}
-                                    </div>
-                                </div>
-                            `)}
-                        </div>
-                    </div>
-                `}
-
-                <!-- Results or Error -->
                 ${(isLoading || analysisResult || backendError) && html`
-                    <div id="results-area" class="animate-fade-in py-12 border-t-2 border-dashed border-neutral-100 dark:border-neutral-800">
+                    <div class="cb-animate-fade">
                         ${isLoading ? html`
-                            <div class="text-center py-24 space-y-6">
-                                <div class="w-20 h-20 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin mx-auto"></div>
-                                <p class="text-2xl font-black animate-pulse opacity-80">${t.analyzing}</p>
-                                <p class="text-neutral-500 italic">${isThinkingMode ? "Accessing deep reasoning models..." : "Synthesizing fast insights..."}</p>
+                            <div style="text-align:center; padding:3rem; opacity:0.6">
+                                <div class="cb-spinner" style="width:3rem; height:3rem; border:4px solid rgba(var(--color-primary-500), 0.2); border-top-color:var(--cb-primary); border-radius:50%; margin:0 auto 1.5rem auto"></div>
+                                <p style="font-weight:900; letter-spacing:0.1em; text-transform:uppercase">${'{{ i18n "cognitive_detector.analyzing" }}'}</p>
                             </div>
                         ` : analysisResult ? html`
-                            <div class="bg-white dark:bg-neutral-900 rounded-[2.5rem] border border-neutral-200 dark:border-neutral-800 shadow-2xl p-8 md:p-14 space-y-10">
-                                <div class="flex items-center space-x-4">
-                                    <div class="bg-primary-500/10 p-4 rounded-3xl text-3xl">✨</div>
-                                    <h3 class="text-3xl font-black italic tracking-tight">${t.results_title}</h3>
-                                </div>
+                            <div class="cb-panel" style="padding:3rem">
+                                <h3 style="font-size:2rem; font-weight:900; margin-bottom:2rem; font-style:italic">
+                                    🔍 ${'{{ i18n "cognitive_detector.results_title" }}'}
+                                </h3>
 
                                 <${HighlightedText} 
                                     text=${lastAnalyzedText} 
@@ -323,42 +405,34 @@
                                     strengths=${analysisResult.strengths} 
                                 />
 
-                                <!-- Fallback for items that couldn't be matched -->
                                 ${(() => {
                                     const textLower = (lastAnalyzedText || "").toLowerCase();
                                     const unmatchedBiases = (analysisResult.biases || []).filter(b => b.phrase && !textLower.includes(b.phrase.toLowerCase()));
                                     const unmatchedStrengths = (analysisResult.strengths || []).filter(s => s.phrase && !textLower.includes(s.phrase.toLowerCase()));
+                                    
                                     if (unmatchedBiases.length === 0 && unmatchedStrengths.length === 0) return null;
                                     return html`
-                                        <div class="mt-8 pt-10 border-t border-neutral-100 dark:border-neutral-800 space-y-6">
-                                            <h4 class="text-xs font-black uppercase tracking-widest text-neutral-400 opacity-60">Abstract Cognitive Insights</h4>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                                ${unmatchedBiases.map(b => html`
-                                                    <div class="p-6 bg-red-500/5 rounded-3xl border border-red-500/10 text-sm">
-                                                        <strong class="text-red-500 uppercase text-xs block mb-2 font-black">${b.biasName}</strong>
-                                                        <span class="opacity-80">${b.explanation}</span>
-                                                    </div>
-                                                `)}
-                                                ${unmatchedStrengths.map(s => html`
-                                                    <div class="p-6 bg-primary-500/5 rounded-3xl border border-primary-500/10 text-sm">
-                                                        <strong class="text-primary-500 uppercase text-xs block mb-2 font-black">Strength</strong>
-                                                        <span class="opacity-80">${s.endorsement}</span>
-                                                    </div>
-                                                `)}
-                                            </div>
+                                        <div class="cb-insights-fallback">
+                                            <h4 style="font-size:0.7rem; font-weight:900; text-transform:uppercase; color:gray; letter-spacing:0.1em; margin-bottom:1rem">Additional Contextual Insights</h4>
+                                            ${unmatchedBiases.map(b => html`
+                                                <div class="cb-insight-item" style="color:#ef4444">
+                                                    <strong>[${b.biasName}]</strong> ${b.explanation}
+                                                </div>
+                                            `)}
+                                            ${unmatchedStrengths.map(s => html`
+                                                <div class="cb-insight-item" style="color:var(--cb-primary)">
+                                                    <strong>[Strength]</strong> ${s.endorsement}
+                                                </div>
+                                            `)}
                                         </div>
                                     `;
                                 })()}
                             </div>
                         ` : backendError ? html`
-                            <div class="bg-red-50 dark:bg-red-900/10 border-2 border-red-500/20 rounded-[2.5rem] p-12 text-center space-y-8 animate-shake">
-                                <div class="text-6xl">⚠️</div>
-                                <h3 class="text-2xl font-black text-red-600">${t.error_generic}</h3>
-                                <div class="p-6 bg-white dark:bg-black/20 rounded-2xl text-left border border-red-500/10 shadow-inner">
-                                    <p class="text-xs font-black uppercase text-red-400 mb-3 tracking-widest">Diagnostic Logs:</p>
-                                    <pre class="text-xs font-mono text-neutral-600 dark:text-neutral-400 overflow-x-auto whitespace-pre-wrap">${backendError.error}: ${backendError.details || JSON.stringify(backendError.diagnostics || backendError, null, 2)}</pre>
-                                </div>
-                                <button onClick=${handleAnalyze} class="px-14 py-4 bg-red-500 text-white rounded-2xl font-black shadow-lg hover:shadow-red-500/30 hover:scale-105 transition-all">Retry Analysis</button>
+                            <div class="cb-panel" style="border-color:#ef4444; background:rgba(239, 68, 68, 0.05); text-align:center">
+                                <h3 style="color:#ef4444; font-weight:900; font-size:1.5rem; margin-bottom:1rem">⚠️ Analysis Error</h3>
+                                <pre style="font-size:0.75rem; opacity:0.7; overflow:auto; max-height:10rem; margin-bottom:1.5rem">${JSON.stringify(backendError, null, 2)}</pre>
+                                <button onClick=${handleAnalyze} class="cb-analyze-btn" style="background:#ef4444; margin:0 auto">Retry</button>
                             </div>
                         ` : ''}
                     </div>
