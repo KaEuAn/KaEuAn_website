@@ -482,22 +482,29 @@ const App = () => {
     const [isThinkingMode, setIsThinkingMode] = useState(true);
     const [isGlossaryOpen, setIsGlossaryOpen] = useState(false);
     const [errorKey, setErrorKey] = useState(null);
+    const [backendError, setBackendError] = useState(null);
 
     const t = useMemo(() => getTranslations(currentLang), [currentLang]);
 
     const handleAnalyzeClick = useCallback(async () => {
         if (!inputText.trim()) { setErrorKey("errorEmptyText"); return; }
-        setIsLoading(true); setErrorKey(null); setAnalysisResult(null);
+        setIsLoading(true); setErrorKey(null); setBackendError(null); setAnalysisResult(null);
 
         try {
             const response = await fetch("/.netlify/functions/analyze", {
                 method: "POST", headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: inputText, language: currentLang, isThinkingMode })
             });
-            if (!response.ok) throw new Error("HTTP error");
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.error || `HTTP error ${response.status}`);
+            }
+
             setAnalysisResult(await response.json());
         } catch (err) {
             setErrorKey("errorAnalysis");
+            setBackendError(err.message);
         } finally { setIsLoading(false); }
     }, [inputText, isThinkingMode, currentLang]);
 
@@ -541,7 +548,12 @@ const App = () => {
                     </div>
                 </div>
 
-                ${errorKey && html`<div class="cb-error">⚠ ${t[errorKey]}</div>`}
+                ${errorKey && html`
+                    <div class="cb-error">
+                        ⚠ ${t[errorKey]}
+                        ${backendError && backendError !== 'HTTP error 500' && html`<br/><small style="opacity:0.8; margin-top:0.5rem; display:block">Server Details: ${backendError}</small>`}
+                    </div>
+                `}
 
                 ${analysisResult && html`
                     <div class="cb-results">

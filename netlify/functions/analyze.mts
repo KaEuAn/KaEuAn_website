@@ -53,10 +53,10 @@ export default async (req: Request, context: Context) => {
         return new Response("Method Not Allowed", { status: 405 });
     }
 
-    const apiKey = process.env.SERVER_GEMINI_API_KEY;
+    const apiKey = process.env.SERVER_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     console.log("Function invoked. Checking for API Key...");
     if (!apiKey) {
-        console.error("CRITICAL ERROR: SERVER_GEMINI_API_KEY is not set in environment variables!");
+        console.error("CRITICAL ERROR: (SERVER_)GEMINI_API_KEY is not set in environment variables!");
         return new Response(JSON.stringify({ error: "Server misconfiguration: API KEY MISSING" }), { status: 500 });
     } else {
         console.log("API Key found (length: " + apiKey.length + "). Proceeding with analysis.");
@@ -71,7 +71,7 @@ export default async (req: Request, context: Context) => {
         }
 
         const ai = new GoogleGenAI({ apiKey });
-        const modelName = isThinkingMode ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
+        const modelName = isThinkingMode ? 'gemini-3.1-pro' : 'gemini-3-flash';
 
         const prompt = `Analyze the following text. Identify phrases demonstrating cognitive biases AND phrases that are strengths (e.g., objective, well-reasoned, clear).
 For each bias, provide the exact phrase, bias name, and a clear explanation.
@@ -95,8 +95,8 @@ Text to analyze:
             headers: { "Content-Type": "application/json" }
         });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error processing request:", error);
-        return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 });
+        return new Response(JSON.stringify({ error: error?.message || "Internal Server Error" }), { status: 500 });
     }
 };
